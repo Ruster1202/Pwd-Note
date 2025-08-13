@@ -19,23 +19,34 @@ function createWindow() {
         height: 600,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'), // 启用预加载脚本
+            /* 
+                控制渲染进程的 JavaScript 上下文是否与主进程隔离。启用后，预加载脚本（preload.js）通过 contextBridge暴露的 API 才能安全传递到渲染进程，避免恶意代码直接访问 Node.js 或 Electron API
+                Electron 12+ 默认为 true，旧版本默认为 false
+                若设为 false，渲染进程可通过 window.require直接访问 Node.js 模块，存在安全风险
+            */
             // contextIsolation: true,
+            /* 
+                是否允许渲染进程使用 remote模块（如 require('electron').remote）。该模块已废弃，因其允许渲染进程直接调用主进程 API，可能导致安全漏洞
+                Electron 10+ 默认为 false，旧版本默认为 true
+                通过 ipcRenderer和 ipcMain进行进程间通信（IPC）
+            */
             // enableRemoteModule: false,
-            // nodeIntegration: true,
+            /* 
+                是否允许渲染进程使用 Node.js API（如 require、process）。启用后，渲染进程可直接调用 Node.js 模块
+                默认为 false。若设为 true，需配合 contextIsolation: false使用，但会降低安全性
+            */
+            nodeIntegration: true, // 使用noptyf请开启
         }
     });
 
     // 隐藏默认菜单栏（可选）
-    Menu.setApplicationMenu(null);
-
+    // Menu.setApplicationMenu(null);
     // 加载本地 HTML 文件
     mainWindow.loadFile('index.html');
     // IPC 注册
     IPCRegister(mainWindow);
     // 开发模式下打开开发者工具（可选）
     mainWindow.webContents.openDevTools();
-    
-
 }
 
 // Electron 初始化完成后创建窗口

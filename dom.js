@@ -7,12 +7,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('save').onclick = async function () {
         var msg = document.getElementById('store_msg').value;
         await window.electronAPI.storeSet('msg', msg);
+        await window.electronAPI.showTip('success', '保存成功！');
     }
     document.getElementById('store_log').onclick = async function () {
         var store = await window.electronAPI.showStore();
         console.log('see store:', store);
     }
-    
 })
 // 初始化操作
 async function init() {
