@@ -10,11 +10,22 @@
             height: 100%; 
         }
         #app {
-            cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            flex-direction: column; /* 垂直排列 */
+            gap: 8px; /* 可选：子元素间距 */
+        }
+        input, button {
+            box-sizing: border-box; /* 统一盒模型 */
+            height: 40px; /* 固定高度 */
+            padding: 8px 12px; /* 统一内边距 */
+            border: 1px solid #ccc; /* 统一边框 */
+            vertical-align: top; /* 顶部对齐 */
+        }
+        .pointer {
+            cursor: pointer; /* 鼠标悬停时显示手型 */
         }
     </style>
 </head>
@@ -22,7 +33,15 @@
     <!-- 额外挂载监听信息 -->
     <script src="dom.js"></script>
     <div>
-        <span id="app">当前计数：<b id="count">0</b></span>
+        <span id="app">
+            <span >
+                <input type="text" name="store_msg" id="store_msg" placeholder="请输入要存储的信息">
+                <button id="save" class="pointer">缓存</button><button id="store_log" class="pointer">查看缓存日志</button>
+            </span>
+            <span id="count" class="pointer">
+                当前计数(点击我)：<b id="value">0</b>
+            </span>
+        </span>
     </div>
 </body>
 </html>
