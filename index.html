@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electorn 模板</title>
+    <style>
+        body, html {
+            margin: 0;
+            height: 100%; 
+        }
+        #app {
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <!-- 额外挂载监听信息 -->
+    <script src="dom.js"></script>
+    <div>
+        <span id="app">当前计数：<b id="count">0</b></span>
+    </div>
+</body>
+</html>
