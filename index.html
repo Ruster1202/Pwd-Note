@@ -1,49 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Electorn 模板</title>
-    <style>
-        body, html {
-            margin: 0;
-            height: 100%; 
-        }
-        #app {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column; /* 垂直排列 */
-            gap: 8px; /* 可选：子元素间距 */
-        }
-        input, button {
-            box-sizing: border-box; /* 统一盒模型 */
-            height: 40px; /* 固定高度 */
-            padding: 8px 12px; /* 统一内边距 */
-            border: 1px solid #ccc; /* 统一边框 */
-            vertical-align: top; /* 顶部对齐 */
-        }
-        .pointer {
-            cursor: pointer; /* 鼠标悬停时显示手型 */
-        }
-    </style>
+    <title>密码生成器</title>
+    <link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
-    <!-- notyf资源挂载 -->
-    <link rel="stylesheet" href="node_modules/notyf/notyf.min.css">
-    <!-- 额外挂载监听信息 -->
-    <script src="dom.js"></script>
-    <div>
-        <span id="app">
-            <span >
-                <input type="text" name="store_msg" id="store_msg" placeholder="请输入要存储的信息">
-                <button id="save" class="pointer">缓存</button><button id="store_log" class="pointer">查看缓存日志</button>
-            </span>
-            <span id="count" class="pointer">
-                当前计数(点击我)：<b id="value">0</b>
-            </span>
-        </span>
+    <div class="container">
+        <h1>密码生成器</h1>
+
+        <!-- 密码生成选项 -->
+        <div class="form-group">
+            <label for="minLength">密码长度范围:</label>
+            <input type="number" id="minLength" min="4" max="128" value="8">
+            <span>：</span>
+            <input type="number" id="maxLength" min="4" max="128" value="16">
+        </div>
+
+        <div class="grid-container">
+
+            <div class="item">
+                <label>
+                    <input type="checkbox" id="uppercase" checked> 必定包含大写字母 
+                </label>
+            </div>
+
+            <div class="item">
+                <label>
+                    <input type="checkbox" id="lowercase" checked> 必定包含小写字母 
+                </label>
+            </div>
+            <div class="item">
+                <label>
+                    <input type="checkbox" id="numbers" checked> 必定包含数字 
+                </label>
+            </div>
+
+            <div class="item">
+                <label>
+                    <input type="checkbox" id="symbols" checked> 必定包含特殊符号 
+                </label>
+            </div>
+            
+        </div>
+
+        <!-- 密码显示区域 -->
+        <div class="output">
+            <input type="text" id="password" readonly>
+            <button id="generate">生成密码</button>
+        </div>
+
+        <!-- 保存密码按钮 -->
+        <div class="form-group">
+            <button id="save" style="width: 100%;">保存到密码本</button>
+        </div>
+
+        <!-- 导航到密码本 -->
+        <div class="form-group">
+            <button id="viewPasswords" style="width: 100%;">查看密码本</button>
+        </div>
     </div>
+
+    <script src="dom.js"></script>
 </body>
+
 </html>
