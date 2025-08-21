@@ -1,13 +1,19 @@
 // 暴露安全的 API 给渲染进程
 const { contextBridge, ipcRenderer } = require('electron');
 const { Notyf } = require("notyf");
+// 在 Renderer 或 Main 进程中
+const { randomUUID } = require('crypto'); // Node.js 方式
+// console.log("UUID:" + randomUUID()); // 输出类似 "550e8400-e29b-41d4-a716-446655440000"
 
 contextBridge.exposeInMainWorld('electronAPI', {
   sendMessage: (message) => ipcRenderer.send('message', message),
   storeGet: (key) => ipcRenderer.invoke('store-get', key),
   storeSet: (key, value) => ipcRenderer.send('store-set', key, value),
   showStore: () => ipcRenderer.invoke('show-store'),
-  showTip: (type, message) => NotyfShow(type, message)
+  showTip: (type, message) => NotyfShow(type, message),
+  getUUID: () => randomUUID(), // Node.js 方式
+  addPwdRecord: (record) => ipcRenderer.invoke('add-pwd-record', record),
+  deletePwdRecord: (id) => ipcRenderer.send('delete-pwd-record', id),
 });
 
 let notyf = null;

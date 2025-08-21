@@ -65,5 +65,24 @@ function IPCRegister(win) {
         console.log('[show-store]：',store.store);
         return store.store; // 获取存储的值
     });
+    ipcMain.handle('add-pwd-record', (event, record) => {
+        const list = store.get('pwdRecords', []);
+        let result = list.some(item => item.id === record.id);
+        if (result) return false; // 如果已存在则不添加
+        // 加入新记录
+        list.push(record);
+        // 写回 Store
+        store.set('pwdRecords', list);
+        return true; // 返回添加成功
+    });
+    ipcMain.on('delete-pwd-record', (event, id) => {
+        // 1. 获取原始列表
+        const list = store.get('pwdRecords', []);
+        // 2. 过滤出非匹配项
+        const newList = list.filter(record => record.id !== id);
+        // 3. 保存回 store
+        store.set('pwdRecords', newList);
+    });
+    
     
 }

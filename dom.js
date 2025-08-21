@@ -7,10 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 缓存当前密码
     document.getElementById('save').addEventListener('click', savePassword);
     // 点击查看密码本
-    document.getElementById('viewPasswords').addEventListener('click', function () {
-        // window.location.href = 'password-book.html';
-        console.log('see pwd note...');
-    });
+    document.getElementById('viewPasswords').addEventListener('click', viewPasswords);
 
 })
 // 初始化操作
@@ -44,12 +41,21 @@ const roleList = [
 
 // 当前生成密钥及其规则
 const globalCurrentPwd = {
-    // 密钥是否初始化
-    isInit:false,
+    // 密钥ID,就是UUID
+    id: null,
+    // 创建时间
+    // createTime: new Date().toLocaleString(),
+    createTime: null,
+    // 密钥是否修改
+    isModify:false,
+    // 修改时间
+    // modifyTime: new Date().toLocaleString(),
+    modifyTime: null,
     // 密钥内容
     content:"",
     // 密钥规则 1111 四位分别表示是否勾选大写字母，小写字母，数字，符号，范围是0-2^4-1 用户必须至少选择一项，否则则使用随机生成
-    rules:0,
+    // 先用string[]代替，后续再改
+    rules:[],
     // 密钥长度
     length: {
         minLength: 0,
@@ -57,47 +63,45 @@ const globalCurrentPwd = {
     },
     // 密钥标签
     tags:[],
-    // 用户名称
+    // 创建用户名称
     userName:'default'
 
 }
-function savePassword() {
+
+function initGlobalCurrentPwd() {
+    globalCurrentPwd.id = null;
+    globalCurrentPwd.isModify = false;
+    globalCurrentPwd.content = "";
+    globalCurrentPwd.rules = [];
+    globalCurrentPwd.length.minLength = 0;
+    globalCurrentPwd.length.maxLength = 0;
+    globalCurrentPwd.tags = [];
+    globalCurrentPwd.userName = 'default';
+}
+
+async function savePassword() {
     const dom = getDom();
     const password = dom.passwordField.value;
     if (!password) {
-        alert('请先生成密码');
+        // alert('请先生成密码');
+        window.electronAPI.showTip('error', '请先生成密码');
         return;
     }
 
-    // 获取密码规则
-    const rules = localStorage.getItem('lastRules') || '未知规则';
-    const length = localStorage.getItem('lastLength') || '未知长度';
-
-    // 获取当前时间
-    const now = new Date();
-    const dateStr = now.toLocaleString();
-
-    // 创建密码对象
-    const passwordObj = {
-        password: password,
-        rules: rules,
-        length: length,
-        date: dateStr
-    };
-
-    // 获取现有密码本或初始化
-    let passwordBook = JSON.parse(localStorage.getItem('passwordBook') || '[]');
-
-    // 添加新密码
-    passwordBook.push(passwordObj);
-
-    // 保存回本地存储
-    localStorage.setItem('passwordBook', JSON.stringify(passwordBook));
-
-    alert('密码已保存到密码本');
+    // 保存密码到本地存储
+    let res = await window.electronAPI.addPwdRecord( globalCurrentPwd);
+    res ? window.electronAPI.showTip('success', '密码已保存到密码本！') : window.electronAPI.showTip('error', '密码已存在，请勿重复添加！');
 }
 
-function generatePassword() {
+async function viewPasswords() {
+    console.log('viewPasswords');
+    let store = await window.electronAPI.showStore();
+    console.log('store:', store);
+    // window.electronAPI.viewPasswords();
+}
+async function generatePassword() {
+    
+    initGlobalCurrentPwd();
     const dom = getDom();
     // 获取用户设置
     const minLength = parseInt(dom.minLengthInput.value);
@@ -139,7 +143,13 @@ function generatePassword() {
         const randomIndex = Math.floor(Math.random() * charSet.length);
         password += charSet[randomIndex];
     }
-
+    // 保存规则和长度到本地数据结构
+    globalCurrentPwd.id = await window.electronAPI.getUUID();
+    globalCurrentPwd.content = password;
+    globalCurrentPwd.rules = rules;
+    globalCurrentPwd.length.minLength = minLength;
+    globalCurrentPwd.length.maxLength = maxLength;
+    globalCurrentPwd.createTime = new Date().toLocaleString();
     // 显示密码
     dom.passwordField.value = password;
 }
@@ -158,6 +168,6 @@ function getDom() {
     const passwordField = document.getElementById('password');
 
     const dom = { minLengthInput, maxLengthInput, lowercaseCheckbox, uppercaseCheckbox, numbersCheckbox, symbolsCheckbox, passwordField };
-    console.log('dom:', dom);
+    // console.log('dom:', dom);
     return dom;
 }
