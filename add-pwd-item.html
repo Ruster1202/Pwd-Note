@@ -1,175 +1,204 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>添加 / 编辑 密码</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f2f5;
-      margin: 0;
-      padding: 20px;
-      color: #333;
-    }
-    form {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 500px;
-      margin: auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    form div.field {
-      margin-bottom: 16px;
-    }
-    form label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 500;
-    }
-    form input[type="text"],
-    form input[type="url"],
-    form input[type="password"],
-    form textarea,
-    form select {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 1em;
-    }
-    .password-wrapper {
-      position: relative;
-    }
-    .password-wrapper button {
-      position: absolute;
-      right: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      border: none;
-      background: none;
-      cursor: pointer;
-      font-size: 0.9em;
-      color: #007BFF;
-    }
-    .rules-group input {
-      margin-right: 6px;
-    }
-    button.submit-btn {
-      background: #28a745;
-      color: #fff;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 4px;
-      font-size: 1em;
-      cursor: pointer;
-    }
-    button.submit-btn:hover {
-      background: #218838;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>添加 / 编辑 密码</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            margin: auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        form div.field {
+            margin-bottom: 16px;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        form input[type="text"],
+        form input[type="url"],
+        form input[type="password"],
+        form textarea,
+        form select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper button {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 0.9em;
+            color: #007BFF;
+        }
+
+        .rules-group input {
+            margin-right: 6px;
+        }
+
+        button.submit-btn {
+            background: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        button.submit-btn:hover {
+            background: #218838;
+        }
+    </style>
 </head>
+
 <body>
-  <form id="pwdForm">
-    <div class="field">
-      <label for="content">密码内容</label>
-      <div class="password-wrapper">
-        <input type="password" id="content" name="content" autocomplete="new-password" required>
-        <button type="button" id="togglepwd" aria-label="显示/隐藏密码">显示</button>
-      </div>
-    </div>
+    <!-- notyf资源挂载 -->
+    <link rel="stylesheet" href="node_modules/notyf/notyf.min.css">
+    <form id="pwdForm">
+        <div class="field">
+            <label for="content">密码内容</label>
+            <div class="password-wrapper">
+                <input type="password" id="content" name="content" autocomplete="new-password" required>
+                <button type="button" id="togglepwd" aria-label="显示/隐藏密码">显示</button>
+            </div>
+        </div>
 
-    <div class="field">
-      <label for="description">说明</label>
-      <textarea id="description" name="description" rows="2"></textarea>
-    </div>
+        <div class="field">
+            <label for="description">说明</label>
+            <textarea id="description" name="description" rows="2"></textarea>
+        </div>
 
-    <div class="field">
-      <label for="url">使用网址</label>
-      <input type="url" id="url" name="url">
-    </div>
+        <div class="field">
+            <label for="url">使用网址</label>
+            <input type="url" id="url" name="url">
+        </div>
 
-    <!-- <div class="field">
-      <label>规则（至少选择一项）</label>
-      <div class="rules-group">
-        <label><input type="checkbox" name="rules" value="uppercaseChars"> 大写</label>
-        <label><input type="checkbox" name="rules" value="lowercaseChars"> 小写</label>
-        <label><input type="checkbox" name="rules" value="numberChars"> 数字</label>
-        <label><input type="checkbox" name="symbolChars" value="symbolChars"> 符号</label>
-      </div>
-    </div> -->
+        <div class="field" id="rules">
+            <label>规则（至少选择一项）</label>
+            <div class="rules-group">
+                <label><input type="checkbox" name="rules" value="uppercaseChars"> 大写</label>
+                <label><input type="checkbox" name="rules" value="lowercaseChars"> 小写</label>
+                <label><input type="checkbox" name="rules" value="numberChars"> 数字</label>
+                <label><input type="checkbox" name="symbolChars" value="symbolChars"> 符号</label>
+            </div>
+        </div>
 
-    <div class="field">
-      <label for="minLength">长度范围</label>
-      <div style="display: flex; gap: 8px;">
-        <input type="number" id="minLength" name="minLength" min="1" placeholder="最小长度">
-        <input type="number" id="maxLength" name="maxLength" min="1" placeholder="最大长度">
-      </div>
-    </div>
+        <div class="field" id="length">
+            <label for="minLength">长度范围</label>
+            <div style="display: flex; gap: 8px;">
+                <input type="number" id="minLength" name="minLength" min="1" placeholder="最小长度">
+                <input type="number" id="maxLength" name="maxLength" min="1" placeholder="最大长度">
+            </div>
+        </div>
 
-    <div class="field">
-      <label for="tags">标签（逗号分隔）</label>
-      <input type="text" id="tags" name="tags" placeholder="例如：工作, 重要">
-    </div>
+        <div class="field">
+            <label for="tags">标签（逗号分隔）</label>
+            <input type="text" id="tags" name="tags" placeholder="例如：工作, 重要">
+        </div>
 
-    <button type="submit" class="submit-btn">保存</button>
-  </form>
+        <button type="submit" class="submit-btn">保存</button>
+    </form>
 
-  <script>
-    const form = document.getElementById('pwdForm');
-    const toggleBtn = document.getElementById('togglepwd');
-    const pwdInput = document.getElementById('content');
+    <script>
+        const form = document.getElementById('pwdForm');
+        const toggleBtn = document.getElementById('togglepwd');
+        const pwdInput = document.getElementById('content');
+        var isEdit = null // true代表是编辑，false代表是新建,不显示密码长度，不展示规则
+        toggleBtn.addEventListener('click', () => {
+            const isPwd = pwdInput.type === 'password';
+            pwdInput.type = isPwd ? 'text' : 'password';
+            toggleBtn.textContent = isPwd ? '隐藏' : '显示';
+        });
 
-    toggleBtn.addEventListener('click', () => {
-      const isPwd = pwdInput.type === 'password';
-      pwdInput.type = isPwd ? 'text' : 'password';
-      toggleBtn.textContent = isPwd ? '隐藏' : '显示';
-    });
+        window.electronAPI.onInitAddPwdItem((data) => {
+            isEdit = data?.id ? false : true;
+            const rulesDiv = document.getElementById('rules');
+            const lengthDiv = document.getElementById('length');
+            if (isEdit) {
+                rulesDiv.style.display = 'none'; // 新建时不显示规则
+                lengthDiv.style.display = 'none'; // 新建时不显示长度范围
+            } else {
+                rulesDiv.style.display = 'block'; // 编辑时显示规则
+                lengthDiv.style.display = 'block'; // 编辑时显示长度范围
+            }
+            if (data?.content) pwdInput.value = data.content;
+            if (data?.description) form.description.value = data.description;
+            if (data?.url) form.url.value = data.url;
+            if (data?.length) {
+                form.minLength.value = data.length.minLength;
+                form.maxLength.value = data.length.maxLength;
+            }
+            //   if (data.rules) {
+            //     data.rules.forEach(r => {
+            //       const cb = form.querySelector(`input[name="rules"][value="${r}"]`);
+            //       if (cb) cb.checked = true;
+            //     });
+            //   }
+            if (data?.tags) {
+                form.tags.value = data.tags.join(', ');
+            }
+        });
 
-    window.electronAPI.onInitAddPwdItem((data) => {
-      if (data.content) pwdInput.value = data.content;
-      if (data.description) form.description.value = data.description;
-      if (data.url) form.url.value = data.url;
-      if (data.length) {
-        form.minLength.value = data.length.minLength;
-        form.maxLength.value = data.length.maxLength;
-      }
-    //   if (data.rules) {
-    //     data.rules.forEach(r => {
-    //       const cb = form.querySelector(`input[name="rules"][value="${r}"]`);
-    //       if (cb) cb.checked = true;
-    //     });
-    //   }
-      if (data.tags) {
-        form.tags.value = data.tags.join(', ');
-      }
-    });
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-    //   const selectedRules = Array.from(form.querySelectorAll('input[name="rules"]:checked')).map(el => el.value);
-    //   if (!selectedRules.length) {
-    //     alert('请至少选择一项规则');
-    //     return;
-    //   }
-      const result = {
-        id: await window.electronAPI.getUUID(),
-        createTime: new Date().toISOString(),
-        isModify: false,
-        updateTime: null,
-        content: pwdInput.value,
-        description: form.description.value,
-        url: form.url.value,
-        rules: ["custom"], //selectedRules,
-        length: {
-          minLength: parseInt(form.minLength.value) || 0,
-          maxLength: parseInt(form.maxLength.value) || 0,
-        },
-        tags: form.tags.value.split(',').map(t => t.trim()).filter(t => t),
-      };
-      await window.electronAPI.addPwdRecord(result);
-    });
-  </script>
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            //   const selectedRules = Array.from(form.querySelectorAll('input[name="rules"]:checked')).map(el => el.value);
+            //   if (!selectedRules.length) {
+            //     alert('请至少选择一项规则');
+            //     return;
+            //   }
+            const result = {
+                id: await window.electronAPI.getUUID(),
+                createTime: new Date().toISOString(),
+                isModify: false,
+                updateTime: null,
+                content: pwdInput.value,
+                description: form.description.value,
+                url: form.url.value,
+                rules: ["custom"], //selectedRules,
+                length: {
+                    minLength: String(pwdInput.value).length || 0,
+                    maxLength: -1,// 特殊标记，代表是自定义的
+                },
+                tags: form.tags.value.split(',').map(t => t.trim()).filter(t => t),
+            };
+            console.log('submit!!!!');
+            await window.electronAPI.addPwdRecord(result);
+            await window.electronAPI.showTip('success', '密码添加成功！');
+            setTimeout(() => {
+               window.close(); 
+            }, 800);
+        });
+    </script>
 </body>
+
 </html>
