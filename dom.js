@@ -42,6 +42,7 @@ const roleList = [
 const globalCurrentPwd = {
     // 密钥ID,就是UUID
     id: null,
+    // TODO: 记得设置时区为东八区，不然切换代理函数就有问题
     // 创建时间
     // createTime: new Date().toLocaleString(),
     createTime: null,

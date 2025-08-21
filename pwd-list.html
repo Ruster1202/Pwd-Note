@@ -166,6 +166,10 @@
         .fab-button:hover {
             background-color: #e73370;
         }
+        /* url样式 */
+        .field-url:has(a[href=""]), .field-url:has(a:not([href])) {
+            display: none;
+        }
     </style>
 </head>
 
@@ -211,6 +215,7 @@
                 const rules = escapeHtml(item.rules.map(ruleKey => ruleLabels[ruleKey]).join(', '))
                 const lengthMin = escapeHtml(String(item.length.minLength));
                 const lengthMax = escapeHtml(String(item.length.maxLength));
+                const url = escapeHtml(item.url ? item.url : '');
 
                 const card = document.createElement('div');
                 card.className = 'card';
@@ -222,6 +227,10 @@
                     <span class="card-title">******</span>
                     </div>
                     <div class="card-time">${createTime}</div>
+                </div>
+                <div class="field field-url">
+                    <span class="label">网址:</span>
+                    <a href="${url}" target="_blank" >${url}</a>
                 </div>
                 <div class="card-body">
                     <!--  <div><span class="label">ID:</span> <span class="value">${id}</span></div>  -->
