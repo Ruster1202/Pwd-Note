@@ -73,32 +73,61 @@
 
         /* // 标签样式 */
         :root {
-      --tag-uppercase-bg: #FFB74D;
-      --tag-lowercase-bg: #81C784;
-      --tag-number-bg:    #64B5F6;
-      --tag-symbol-bg:    #BA68C8;
-      --tag-text: #fff;
-      --tag-padding: 2px 8px;
-      --tag-radius: 12px;
-      --tag-font: 0.85em Arial, sans-serif;
-      --tag-gap: 6px;
-    }
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--tag-gap);
-    }
-    .tag {
-      display: inline-block;
-      padding: var(--tag-padding);
-      border-radius: var(--tag-radius);
-      font: var(--tag-font);
-      color: var(--tag-text);
-    }
-    .tag-uppercaseChars { background-color: var(--tag-uppercase-bg); }
-    .tag-lowercaseChars { background-color: var(--tag-lowercase-bg); }
-    .tag-numberChars    { background-color: var(--tag-number-bg); }
-    .tag-symbolChars    { background-color: var(--tag-symbol-bg); }
+            --tag-uppercase-bg: #FFB74D;
+            --tag-lowercase-bg: #81C784;
+            --tag-number-bg: #64B5F6;
+            --tag-symbol-bg: #BA68C8;
+            --tag-text: #fff;
+            --tag-padding: 2px 8px;
+            --tag-radius: 12px;
+            --tag-font: 0.85em Arial, sans-serif;
+            --tag-gap: 6px;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--tag-gap);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: var(--tag-padding);
+            border-radius: var(--tag-radius);
+            font: var(--tag-font);
+            color: var(--tag-text);
+        }
+
+        .tag-uppercaseChars {
+            background-color: var(--tag-uppercase-bg);
+        }
+
+        .tag-lowercaseChars {
+            background-color: var(--tag-lowercase-bg);
+        }
+
+        .tag-numberChars {
+            background-color: var(--tag-number-bg);
+        }
+
+        .tag-symbolChars {
+            background-color: var(--tag-symbol-bg);
+        }
+        /* 按钮 */
+        /* .btns { margin-top: 10px; display: flex; gap: 8px; }
+        .btn { cursor: pointer; padding: 4px 8px; border: none; border-radius: 4px; font-size: .9em; }
+        .btn-show { background: #f0ad4e; color: #fff; }
+        .btn-copy { background: #5bc0de; color: #fff; } */
+        .title-and-btns {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .card-title { font-weight: 600; word-break: break-all; margin: 0; }
+        .btn-inline {
+            cursor: pointer; padding: 2px 6px; border: none; border-radius: 3px; font-size: .85em;
+            background: #888; color: #fff;
+        }
     </style>
 </head>
 
@@ -132,7 +161,7 @@
                 const content = escapeHtml(item.content);
                 const createTime = escapeHtml(item.createTime);
                 const id = escapeHtml(item.id);
-                const rules = escapeHtml(item.rules.map(ruleKey =>  ruleLabels[ruleKey]).join(', '))
+                const rules = escapeHtml(item.rules.map(ruleKey => ruleLabels[ruleKey]).join(', '))
                 const lengthMin = escapeHtml(String(item.length.minLength));
                 const lengthMax = escapeHtml(String(item.length.maxLength));
 
@@ -140,7 +169,11 @@
                 card.className = 'card';
                 card.innerHTML = `
                 <div class="card-header">
-                    <div class="card-title">${content}</div>
+                    <div class="title-and-btns">
+                    <button class="btn-inline btn-copy">复制</button>
+                    <button class="btn-inline btn-show">显示</button>
+                    <span class="card-title">******</span>
+                    </div>
                     <div class="card-time">${createTime}</div>
                 </div>
                 <div class="card-body">
@@ -148,6 +181,23 @@
                     <div><span class="label">Rules:</span> <span class="value">${rules}</span></div>
                     <div><span class="label">Length:</span> <span class="value">${lengthMin} – ${lengthMax}</span></div>
                 </div>`;
+                const titleSpan = card.querySelector('.card-title');
+                const showBtn = card.querySelector('.btn-show');
+                const copyBtn = card.querySelector('.btn-copy');
+                let hidden = true;
+
+                showBtn.addEventListener('click', () => {
+                    hidden = !hidden;
+                    titleSpan.innerText = hidden ? '******' : content;
+                    showBtn.innerText = hidden ? '显示' : '隐藏';
+                });
+
+                copyBtn.addEventListener('click', async () => {
+                        await navigator.clipboard.writeText(content);
+                        copyBtn.innerText = '已复制';
+                        setTimeout(() => copyBtn.innerText = '复制', 1000);
+                    }
+                );
                 container.appendChild(card);
             });
         });
