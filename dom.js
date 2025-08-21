@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('DOMContentLoaded')
     await init()
-    
     // 生成密码
     document.getElementById('generate').addEventListener('click', generatePassword);
     // 缓存当前密码
@@ -68,7 +67,6 @@ const globalCurrentPwd = {
     tags:[],
     // 创建用户名称
     userName:'default'
-
 }
 
 function initGlobalCurrentPwd() {

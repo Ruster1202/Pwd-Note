@@ -15,7 +15,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   addPwdRecord: (record) => ipcRenderer.invoke('add-pwd-record', record),
   deletePwdRecord: (id) => ipcRenderer.send('delete-pwd-record', id),
   openListWindow: (dataList) => ipcRenderer.invoke('open-list-window',dataList),
-  onInit: (cb) => ipcRenderer.on('init-data', (event, data) => cb(data))
+  onInit: (cb) => ipcRenderer.on('init-data', (event, data) => cb(data)),
+  openAddPasswordWindow: () => ipcRenderer.invoke('open-add-password-window'),
+  onInitAddPwdItem: (cb) => ipcRenderer.on('init-data-add-pwd-item', (event, data) => cb(data)),
 });
 
 let notyf = null;

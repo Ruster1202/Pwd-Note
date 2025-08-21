@@ -70,6 +70,29 @@ function createListWindow(dataList) {
         listWin.webContents.send('init-data', dataList); // 初始化数据
     });
 }
+// open-add-password-window
+function createAddPasswordWindow(data) {
+    console.log('data:', data);
+    const addPwdWin = new BrowserWindow({
+        width: 600,
+        height: 800,
+        parent: BrowserWindow.getFocusedWindow(), // 设置父窗口
+        modal: true, // 模态窗口（主窗口失焦）
+        show: false,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: true, // 使用noptyf请开启
+            sandbox: false,
+        },
+    });
+    addPwdWin.loadFile('add-pwd-item.html');
+
+    addPwdWin.webContents.openDevTools();
+    addPwdWin.once('ready-to-show', () => {
+        addPwdWin.show();
+        addPwdWin.webContents.send('init-data-add-pwd-item', data); // 初始化数据
+    });
+}
 
 
 // Electron 初始化完成后创建窗口
@@ -108,6 +131,9 @@ function IPCRegister(win) {
     });
     ipcMain.handle('open-list-window', (event, dataList) => {
         createListWindow(dataList || []);
+    });
+    ipcMain.handle('open-add-password-window', (event, data) => {
+        createAddPasswordWindow(data || null);
     });
 
 }
