@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('save').addEventListener('click', savePassword);
     // 点击查看密码本
     document.getElementById('viewPasswords').addEventListener('click', viewPasswords);
-
+    
 })
 // 初始化操作
 async function init() {
@@ -49,10 +49,13 @@ const globalCurrentPwd = {
     // 密钥是否修改
     isModify:false,
     // 修改时间
-    // modifyTime: new Date().toLocaleString(),
     modifyTime: null,
     // 密钥内容
     content:"",
+    // 密钥说明
+    description:"",
+    // 密钥使用网址
+    url:"",
     // 密钥规则 1111 四位分别表示是否勾选大写字母，小写字母，数字，符号，范围是0-2^4-1 用户必须至少选择一项，否则则使用随机生成
     // 先用string[]代替，后续再改
     rules:[],
@@ -98,6 +101,9 @@ async function viewPasswords() {
     let store = await window.electronAPI.showStore();
     console.log('store:', store);
     // window.electronAPI.viewPasswords();
+    // 打开视图
+    window.electronAPI.openListWindow(store.pwdRecords || []);
+    // await window.electronAPI.openListWindow();
 }
 async function generatePassword() {
     

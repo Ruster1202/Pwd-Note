@@ -1,7 +1,7 @@
 /* 
 该文件定义应用的主窗口并加载预加载脚本
  */
-const { app, BrowserWindow, Menu ,screen, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, screen, ipcMain } = require('electron');
 const path = require('path');
 const Store = require("electron-store");
 
@@ -48,6 +48,29 @@ function createWindow() {
     // 开发模式下打开开发者工具（可选）
     mainWindow.webContents.openDevTools();
 }
+function createListWindow(dataList) {
+    console.log('dataList:', dataList);
+    const listWin = new BrowserWindow({
+        width: 600,
+        height: 800,
+        parent: BrowserWindow.getFocusedWindow(), // 设置父窗口
+        modal: true, // 模态窗口（主窗口失焦）
+        show: false,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: true, // 使用noptyf请开启
+            sandbox: false,
+        },
+    });
+    listWin.loadFile('pwd-list.html');
+
+    listWin.webContents.openDevTools();
+    listWin.once('ready-to-show', () => {
+        listWin.show();
+        listWin.webContents.send('init-data', dataList); // 初始化数据
+    });
+}
+
 
 // Electron 初始化完成后创建窗口
 app.whenReady().then(createWindow);
@@ -62,7 +85,7 @@ function IPCRegister(win) {
         store.set(key, value); // 设置存储的值
     });
     ipcMain.handle('show-store', (event) => {
-        console.log('[show-store]：',store.store);
+        console.log('[show-store]：', store.store);
         return store.store; // 获取存储的值
     });
     ipcMain.handle('add-pwd-record', (event, record) => {
@@ -83,6 +106,8 @@ function IPCRegister(win) {
         // 3. 保存回 store
         store.set('pwdRecords', newList);
     });
-    
-    
+    ipcMain.handle('open-list-window', (event, dataList) => {
+        createListWindow(dataList || []);
+    });
+
 }

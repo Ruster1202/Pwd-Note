@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Password List</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: #f0f2f5;
+            padding: 20px;
+            color: #333;
+        }
+
+        #list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            padding: 16px;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #222;
+            word-break: break-all;
+        }
+
+        .card-time {
+            font-size: 0.85em;
+            color: #777;
+            white-space: nowrap;
+        }
+
+        .card-body {
+            font-size: 0.93em;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .card-body div {
+            margin-bottom: 6px;
+        }
+
+        .label {
+            font-weight: 500;
+            color: #444;
+        }
+
+        .value {
+            color: #666;
+        }
+
+        /* // 标签样式 */
+        :root {
+      --tag-uppercase-bg: #FFB74D;
+      --tag-lowercase-bg: #81C784;
+      --tag-number-bg:    #64B5F6;
+      --tag-symbol-bg:    #BA68C8;
+      --tag-text: #fff;
+      --tag-padding: 2px 8px;
+      --tag-radius: 12px;
+      --tag-font: 0.85em Arial, sans-serif;
+      --tag-gap: 6px;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--tag-gap);
+    }
+    .tag {
+      display: inline-block;
+      padding: var(--tag-padding);
+      border-radius: var(--tag-radius);
+      font: var(--tag-font);
+      color: var(--tag-text);
+    }
+    .tag-uppercaseChars { background-color: var(--tag-uppercase-bg); }
+    .tag-lowercaseChars { background-color: var(--tag-lowercase-bg); }
+    .tag-numberChars    { background-color: var(--tag-number-bg); }
+    .tag-symbolChars    { background-color: var(--tag-symbol-bg); }
+    </style>
+</head>
+
+<body>
+    <div id="list">正在加载数据...</div>
+
+    <script>
+        // FIX:左括号< 注入BUG
+        function escapeHtml(str) {
+            if (typeof str !== 'string') return str;
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;')
+                .replace(/`/g, '&#096;');
+        }
+        // 规则标签名称转换
+        const ruleLabels = {
+            uppercaseChars: '大写',
+            lowercaseChars: '小写',
+            numberChars: '数字',
+            symbolChars: '符号',
+        };
+        window.electronAPI.onInit((list) => {
+            const container = document.getElementById('list');
+            container.innerHTML = '';
+
+            list.forEach(item => {
+                const content = escapeHtml(item.content);
+                const createTime = escapeHtml(item.createTime);
+                const id = escapeHtml(item.id);
+                const rules = escapeHtml(item.rules.map(ruleKey =>  ruleLabels[ruleKey]).join(', '))
+                const lengthMin = escapeHtml(String(item.length.minLength));
+                const lengthMax = escapeHtml(String(item.length.maxLength));
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                <div class="card-header">
+                    <div class="card-title">${content}</div>
+                    <div class="card-time">${createTime}</div>
+                </div>
+                <div class="card-body">
+                    <!--  <div><span class="label">ID:</span> <span class="value">${id}</span></div>  -->
+                    <div><span class="label">Rules:</span> <span class="value">${rules}</span></div>
+                    <div><span class="label">Length:</span> <span class="value">${lengthMin} – ${lengthMax}</span></div>
+                </div>`;
+                container.appendChild(card);
+            });
+        });
+    </script>
+
+</body>
+
+</html>
