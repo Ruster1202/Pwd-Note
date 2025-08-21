@@ -14,6 +14,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getUUID: () => randomUUID(), // Node.js 方式
   addPwdRecord: (record) => ipcRenderer.invoke('add-pwd-record', record),
   deletePwdRecord: (id) => ipcRenderer.send('delete-pwd-record', id),
+  // loadPasswordList: () => ipcRenderer.send('load-password-list'),
   openListWindow: (dataList) => ipcRenderer.invoke('open-list-window',dataList),
   onInit: (cb) => ipcRenderer.on('init-data', (event, data) => cb(data)),
   openAddPasswordWindow: () => ipcRenderer.invoke('open-add-password-window'),

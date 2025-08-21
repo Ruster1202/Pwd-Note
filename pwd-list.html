@@ -181,6 +181,13 @@
     <div class="fab-container" id="fabAdd">
         <div class="fab-button">+</div>
     </div>
+    <!-- <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 在这里处理“加载页面”事件，比如从服务器获取数据
+            // 主动请求发起数据
+            await  window.electronAPI.loadPasswordList(); // 可根据具体实现修改
+        });
+    </script> -->
     <script>
         document.getElementById('fabAdd').addEventListener('click', () => {
             // 在这里处理“添加密码”事件，比如打开一个IPC窗口或弹窗
@@ -265,6 +272,7 @@
                     await navigator.clipboard.writeText(content);
                     await window.electronAPI.showTip('success','已复制！');
                 });
+                card.title = "双击以复制"
                 container.appendChild(card);
             });
         });

@@ -66,8 +66,14 @@ function createListWindow(dataList) {
 
     listWin.webContents.openDevTools();
     listWin.once('ready-to-show', () => {
+        console.log('ready-to-show...');
         listWin.show();
         listWin.webContents.send('init-data', dataList); // 初始化数据
+    });
+    // 刷新回调
+    listWin.webContents.on('did-finish-load', () => {
+        console.log('did-finish-load...');
+        listWin.webContents.send('init-data', dataList);
     });
 }
 // open-add-password-window
