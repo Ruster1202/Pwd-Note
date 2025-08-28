@@ -132,6 +132,9 @@ async function generatePassword() {
     const minLength = parseInt(dom.minLengthInput.value);
     const maxLength = parseInt(dom.maxLengthInput.value);
 
+    
+    // 生成密码
+    let password = '';
     // 验证长度范围
     if (minLength > maxLength) {
         alert('最小长度不能大于最大长度');
@@ -143,8 +146,8 @@ async function generatePassword() {
     }
 
     // 随机在minLength , maxLength之间生成长度
-    const length = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
-
+    let length = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
+    console.log('see pwd length:',length);
     // 构建可用字符集
     let charSet = '';
     let rules = [];
@@ -153,6 +156,9 @@ async function generatePassword() {
         if (checkboxList[i].checked) {
             charSet += roleList[i].data;
             rules.push(roleList[i].name)
+            // 保底密码
+            const randomIndex = Math.floor(Math.random() * roleList[i].data.length);
+            password += roleList[i].data[randomIndex];
         }
     }
 
@@ -161,13 +167,18 @@ async function generatePassword() {
         alert('请至少选择一种字符类型');
         return;
     }
-
-    // 生成密码
-    let password = '';
+    length -= password.length
     for (let i = 0; i < length; i++) {
         const randomIndex = Math.floor(Math.random() * charSet.length);
         password += charSet[randomIndex];
     }
+    // 再整体shuffle
+    password = password.split('').sort(() => Math.random() - 0.5).join('');
+    // 打乱顺序以避免模式化 可选分支步骤
+    // for (let i = passwordChars.length - 1; i > 0; i--) {
+    //     const j = Math.floor(Math.random() * (i + 1));
+    //     [passwordChars[i], passwordChars[j]] = [passwordChars[j], passwordChars[i]];
+    // }
     // 保存规则和长度到本地数据结构
     globalCurrentPwd.id = await window.electronAPI.getUUID();
     globalCurrentPwd.content = password;
