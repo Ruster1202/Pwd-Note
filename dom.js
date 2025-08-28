@@ -1,5 +1,6 @@
 // TODO:自定义使用布局
 // TODO:控制宽度为固定几个模板
+// TODO:提供一个历史密码生成列表，避免点击太快看不到曾经生成过的密码
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('DOMContentLoaded')
     await init()
@@ -10,25 +11,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 点击查看密码本
     document.getElementById('viewPasswords').addEventListener('click', viewPasswords);
     // 挂载工具栏 reset-store
-    document.getElementById('reset-store').addEventListener('click', async () => {
-        let res = await window.electronAPI.resetStore();
-        res ? window.electronAPI.showTip('success', '存储已重置！') : window.electronAPI.showTip('error', '存储重置失败！');
-    });
-    document.getElementById('check-store').addEventListener('click', async () => {
-        let store = await window.electronAPI.showStore();
-        console.log('check-store:', store);
-        window.electronAPI.showTip('success', '存储已打印到控制台！');
-    });
-    document.getElementById('generate-store').addEventListener('click', async () => {
-        // 生成10条随机密码，长度在8-16之间
-        for (let i=0;i<10;i++) {
-           await generatePassword();
-           await savePassword();
-        }
-        window.electronAPI.showTip('success', '批量密码已生成并保存到密码本！');
-    });
-    
+    document.getElementById('reset-store').addEventListener('click', loadResetTool);
+    document.getElementById('check-store').addEventListener('click', loadCheckTool);
+    document.getElementById('generate-store').addEventListener('click', loadGenerateTool);
+
 })
+
+
+
 // 初始化操作
 async function init() {
     console.log('init');
@@ -41,20 +31,20 @@ const symbolChars = '!@#$%^&*()_+-=[]{}|;:,.<>?~';
 // const roleList = [uppercaseChars,lowercaseChars,numberChars,symbolChars]
 const roleList = [
     {
-        data:uppercaseChars,
-        name:"uppercaseChars"
+        data: uppercaseChars,
+        name: "uppercaseChars"
     },
     {
-        data:lowercaseChars,
-        name:"lowercaseChars"
+        data: lowercaseChars,
+        name: "lowercaseChars"
     },
     {
-        data:numberChars,
-        name:"numberChars"
+        data: numberChars,
+        name: "numberChars"
     },
     {
-        data:symbolChars,
-        name:"symbolChars"
+        data: symbolChars,
+        name: "symbolChars"
     }
 ]
 
@@ -67,27 +57,27 @@ const globalCurrentPwd = {
     // createTime: new Date().toLocaleString(),
     createTime: null,
     // 密钥是否修改
-    isModify:false,
+    isModify: false,
     // 修改时间
     modifyTime: null,
     // 密钥内容
-    content:"",
+    content: "",
     // 密钥说明
-    description:"",
+    description: "",
     // 密钥使用网址
-    url:"",
+    url: "",
     // 密钥规则 1111 四位分别表示是否勾选大写字母，小写字母，数字，符号，范围是0-2^4-1 用户必须至少选择一项，否则则使用随机生成
     // 先用string[]代替，后续再改
-    rules:[],
+    rules: [],
     // 密钥长度
     length: {
         minLength: 0,
         maxLength: 0,
     },
     // 密钥标签
-    tags:[],
+    tags: [],
     // 创建用户名称
-    userName:'default'
+    userName: 'default'
 }
 
 function initGlobalCurrentPwd() {
@@ -111,7 +101,7 @@ async function savePassword() {
     }
 
     // 保存密码到本地存储
-    let res = await window.electronAPI.addPwdRecord( globalCurrentPwd);
+    let res = await window.electronAPI.addPwdRecord(globalCurrentPwd);
     res ? window.electronAPI.showTip('success', '密码已保存到密码本！') : window.electronAPI.showTip('error', '密码已存在，请勿重复添加！');
 }
 
@@ -125,14 +115,14 @@ async function viewPasswords() {
     // await window.electronAPI.openListWindow();
 }
 async function generatePassword() {
-    
+
     initGlobalCurrentPwd();
     const dom = getDom();
     // 获取用户设置
     const minLength = parseInt(dom.minLengthInput.value);
     const maxLength = parseInt(dom.maxLengthInput.value);
 
-    
+
     // 生成密码
     let password = '';
     // 验证长度范围
@@ -147,12 +137,12 @@ async function generatePassword() {
 
     // 随机在minLength , maxLength之间生成长度
     let length = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
-    console.log('see pwd length:',length);
+    console.log('see pwd length:', length);
     // 构建可用字符集
     let charSet = '';
     let rules = [];
     let checkboxList = [dom.uppercaseCheckbox, dom.lowercaseCheckbox, dom.numbersCheckbox, dom.symbolsCheckbox]
-    for (let i=0;i<checkboxList.length;i++) {
+    for (let i = 0; i < checkboxList.length; i++) {
         if (checkboxList[i].checked) {
             charSet += roleList[i].data;
             rules.push(roleList[i].name)
@@ -189,7 +179,24 @@ async function generatePassword() {
     // 显示密码
     dom.passwordField.value = password;
 }
+async function loadResetTool() {
+    let res = await window.electronAPI.resetStore();
+    res ? window.electronAPI.showTip('success', '存储已重置！') : window.electronAPI.showTip('error', '存储重置失败！');
+}
+async function loadCheckTool() {
+    let store = await window.electronAPI.showStore();
+    console.log('check-store:', store);
+    window.electronAPI.showTip('success', '存储已打印到控制台！');
+}
+async function loadGenerateTool() {
 
+    // 生成10条随机密码，长度在8-16之间
+    for (let i = 0; i < 10; i++) {
+        await generatePassword();
+        await savePassword();
+    }
+    window.electronAPI.showTip('success', '批量密码已生成并保存到密码本！');
+}
 function getDom() {
     // 获取DOM元素
     // 使用.value

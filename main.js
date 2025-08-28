@@ -54,7 +54,7 @@ function createListWindow(dataList) {
         width: 600,
         height: 800,
         parent: BrowserWindow.getFocusedWindow(), // 设置父窗口
-        modal: true, // 模态窗口（主窗口失焦）
+        // modal: true, // 模态窗口（主窗口失焦）
         show: false,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
@@ -83,7 +83,7 @@ function createAddPasswordWindow(data) {
         width: 600,
         height: 800,
         parent: BrowserWindow.getFocusedWindow(), // 设置父窗口
-        modal: true, // 模态窗口（主窗口失焦）
+        // modal: true, // 模态窗口（主窗口失焦）
         show: false,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),

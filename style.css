@@ -20,8 +20,11 @@ h1 {
 
 .grid-container {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* 定义两列等宽 */
-    gap: 20px; /* 设置元素间距 */
+    grid-template-columns: 1fr 1fr;
+    /* 定义两列等宽 */
+    gap: 20px;
+
+    /* 设置元素间距 */
     .item {
         background-color: #f0f0f0;
         padding: 20px;
@@ -31,7 +34,8 @@ h1 {
 
 
 .form-group {
-    margin-bottom: 15px;
+    /* margin-bottom: 15px; */
+    margin-top: 15px;
 }
 
 label {
@@ -76,4 +80,35 @@ button:hover {
 
 #generate {
     border-radius: 0 4px 4px 0;
+}
+
+
+/* 工具按钮样式 */
+.tool-buttons {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    /* flex-direction: column; */
+    gap: 10px;
+    z-index: 1000;
+}
+
+.tool-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.tool-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
 }
