@@ -140,7 +140,26 @@
             background: #888;
             color: #fff;
         }
+        /* 编辑密码按钮 */
+        .card {
+            position: relative; /* 建立定位上下文 */
+        }
 
+        .btn-edit {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: #007bff; 
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
         /* FAB 样式 */
         .fab-container {
             position: fixed;
@@ -157,7 +176,7 @@
             background-color: #ff4081;
             color: white;
             font-size: 32px;
-            line-height: 56px;
+            /* line-height: 56px; */
             text-align: center;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: background-color 0.2s;
@@ -193,6 +212,8 @@
             // 在这里处理“添加密码”事件，比如打开一个IPC窗口或弹窗
             window.electronAPI.openAddPasswordWindow(null); // 可根据具体实现修改
         });
+    </script>
+    <script>
         // FIX:左括号< 注入BUG
         function escapeHtml(str) {
             if (typeof str !== 'string') return str;
@@ -245,7 +266,8 @@
                     <!--  <div><span class="label">ID:</span> <span class="value">${id}</span></div>  -->
                     <div><span class="label">Rules:</span> <span class="value">${rules}</span></div>
                     <div><span class="label">Length:</span> <span class="value">${lengthMin} – ${lengthMax}</span></div>
-                </div>`;
+                </div>
+                <button class="btn-edit" title="编辑">✎</button>`;
                 const titleSpan = card.querySelector('.card-title');
                 const showBtn = card.querySelector('.btn-show');
                 const copyBtn = card.querySelector('.btn-copy');
@@ -271,6 +293,11 @@
                     // await window.electronAPI.openAddPasswordWindow(item);
                     await navigator.clipboard.writeText(content);
                     await window.electronAPI.showTip('success','已复制！');
+                });
+                card.querySelector('.btn-edit').addEventListener('click', (event) => {
+                    event.stopPropagation(); // 阻止事件冒泡
+                    // 这里放编辑逻辑，比如打开编辑窗口
+                    window.electronAPI.openAddPasswordWindow(item);
                 });
                 card.title = "双击以复制"
                 container.appendChild(card);

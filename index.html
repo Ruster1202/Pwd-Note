@@ -6,11 +6,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>密码生成器</title>
     <link rel="stylesheet" href="./style.css">
+    <style>
+        /* 工具按钮样式 */
+        .tool-buttons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            /* flex-direction: column; */
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .tool-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .tool-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+
+    </style>
 </head>
 
 <body>
     <!-- notyf资源挂载 -->
     <link rel="stylesheet" href="node_modules/notyf/notyf.min.css">
+    <div class="tool-buttons">
+        <a href="#tool1" class="tool-btn" id="reset-store" title="重置">
+            <span class="material-icons">重置</span>
+        </a>
+        <a href="#tool2" class="tool-btn" id="check-store" title="查看">
+            <span class="material-icons">查看</span>
+        </a>
+        <a href="#tool3" class="tool-btn" id="generate-store" title="批量   ">
+            <span class="material-icons">批量</span>
+        </a>
+    </div>
     <div class="container">
         <h1>密码生成器</h1>
 
@@ -26,27 +70,27 @@
 
             <div class="item">
                 <label>
-                    <input type="checkbox" id="uppercase" checked> 必定包含大写字母 
+                    <input type="checkbox" id="uppercase" checked> 必定包含大写字母
                 </label>
             </div>
 
             <div class="item">
                 <label>
-                    <input type="checkbox" id="lowercase" checked> 必定包含小写字母 
+                    <input type="checkbox" id="lowercase" checked> 必定包含小写字母
                 </label>
             </div>
             <div class="item">
                 <label>
-                    <input type="checkbox" id="numbers" checked> 必定包含数字 
+                    <input type="checkbox" id="numbers" checked> 必定包含数字
                 </label>
             </div>
 
             <div class="item">
                 <label>
-                    <input type="checkbox" id="symbols" checked> 必定包含特殊符号 
+                    <input type="checkbox" id="symbols" checked> 必定包含特殊符号
                 </label>
             </div>
-            
+
         </div>
 
         <!-- 密码显示区域 -->

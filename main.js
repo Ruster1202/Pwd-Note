@@ -142,4 +142,14 @@ function IPCRegister(win) {
         createAddPasswordWindow(data || null);
     });
 
+    ipcMain.handle('reset-store', (event) => {
+        try {
+            store.clear();
+        } catch (error) {
+            console.error('Error clearing store:', error);
+            return false;
+        }
+        return true;
+    });
+
 }

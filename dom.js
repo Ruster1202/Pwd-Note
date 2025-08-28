@@ -1,3 +1,5 @@
+// TODO:自定义使用布局
+// TODO:控制宽度为固定几个模板
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('DOMContentLoaded')
     await init()
@@ -7,6 +9,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('save').addEventListener('click', savePassword);
     // 点击查看密码本
     document.getElementById('viewPasswords').addEventListener('click', viewPasswords);
+    // 挂载工具栏 reset-store
+    document.getElementById('reset-store').addEventListener('click', async () => {
+        let res = await window.electronAPI.resetStore();
+        res ? window.electronAPI.showTip('success', '存储已重置！') : window.electronAPI.showTip('error', '存储重置失败！');
+    });
+    document.getElementById('check-store').addEventListener('click', async () => {
+        let store = await window.electronAPI.showStore();
+        console.log('check-store:', store);
+        window.electronAPI.showTip('success', '存储已打印到控制台！');
+    });
+    document.getElementById('generate-store').addEventListener('click', async () => {
+        // 生成10条随机密码，长度在8-16之间
+        for (let i=0;i<10;i++) {
+           await generatePassword();
+           await savePassword();
+        }
+        window.electronAPI.showTip('success', '批量密码已生成并保存到密码本！');
+    });
     
 })
 // 初始化操作
