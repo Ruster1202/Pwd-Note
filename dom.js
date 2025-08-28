@@ -15,6 +15,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('check-store').addEventListener('click', loadCheckTool);
     document.getElementById('generate-store').addEventListener('click', loadGenerateTool);
 
+    // 监控生成条件改变  
+    const els = document.querySelectorAll('#uppercase, #lowercase, #numbers, #symbols, #minLength, #maxLength');
+    els.forEach(el => el.addEventListener('change', handleConditionChange));
 })
 
 
@@ -213,4 +216,10 @@ function getDom() {
     const dom = { minLengthInput, maxLengthInput, lowercaseCheckbox, uppercaseCheckbox, numbersCheckbox, symbolsCheckbox, passwordField };
     // console.log('dom:', dom);
     return dom;
+}
+
+function handleConditionChange() {
+    const dom = getDom();
+    // 只用重置密码即可，防止提交  规则-密码内容 不一致的记录
+    dom.passwordField.value = '';
 }
