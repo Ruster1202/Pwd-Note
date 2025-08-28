@@ -131,11 +131,11 @@ async function generatePassword() {
     // 验证长度范围
     if (minLength > maxLength) {
         alert('最小长度不能大于最大长度');
-        return;
+        return false;
     }
     if (minLength < 4 || maxLength > 128) {
         alert('密码长度范围应在4-128之间');
-        return;
+        return false;
     }
 
     // 随机在minLength , maxLength之间生成长度
@@ -158,7 +158,7 @@ async function generatePassword() {
     // 检查至少选择了一种字符类型
     if (charSet.length === 0) {
         alert('请至少选择一种字符类型');
-        return;
+        return false;
     }
     length -= password.length
     for (let i = 0; i < length; i++) {
@@ -181,6 +181,7 @@ async function generatePassword() {
     globalCurrentPwd.createTime = new Date().toLocaleString();
     // 显示密码
     dom.passwordField.value = password;
+    return true
 }
 async function loadResetTool() {
     let res = await window.electronAPI.resetStore();
@@ -195,7 +196,11 @@ async function loadGenerateTool() {
 
     // 生成10条随机密码，长度在8-16之间
     for (let i = 0; i < 10; i++) {
-        await generatePassword();
+        let resGenerate = await generatePassword();
+        if (!resGenerate) {
+            window.electronAPI.showTip('error', '生成失败,请查看提示！');
+            return;
+        }
         await savePassword();
     }
     window.electronAPI.showTip('success', '批量密码已生成并保存到密码本！');

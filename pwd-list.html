@@ -5,197 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>密码本</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            background-color: #f0f2f5;
-            padding: 20px;
-            color: #333;
-        }
-
-        #list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 16px;
-        }
-
-        .card {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            padding: 16px;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .card-title {
-            font-size: 1.2em;
-            font-weight: 600;
-            color: #222;
-            word-break: break-all;
-        }
-
-        .card-time {
-            font-size: 0.85em;
-            color: #777;
-            white-space: nowrap;
-        }
-
-        .card-body {
-            font-size: 0.93em;
-            color: #555;
-            line-height: 1.4;
-        }
-
-        .card-body div {
-            margin-bottom: 6px;
-        }
-
-        .label {
-            font-weight: 500;
-            color: #444;
-        }
-
-        .value {
-            color: #666;
-        }
-
-        /* // 标签样式 */
-        :root {
-            --tag-uppercase-bg: #FFB74D;
-            --tag-lowercase-bg: #81C784;
-            --tag-number-bg: #64B5F6;
-            --tag-symbol-bg: #BA68C8;
-            --tag-text: #fff;
-            --tag-padding: 2px 8px;
-            --tag-radius: 12px;
-            --tag-font: 0.85em Arial, sans-serif;
-            --tag-gap: 6px;
-        }
-
-        .tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--tag-gap);
-        }
-
-        .tag {
-            display: inline-block;
-            padding: var(--tag-padding);
-            border-radius: var(--tag-radius);
-            font: var(--tag-font);
-            color: var(--tag-text);
-        }
-
-        .tag-uppercaseChars {
-            background-color: var(--tag-uppercase-bg);
-        }
-
-        .tag-lowercaseChars {
-            background-color: var(--tag-lowercase-bg);
-        }
-
-        .tag-numberChars {
-            background-color: var(--tag-number-bg);
-        }
-
-        .tag-symbolChars {
-            background-color: var(--tag-symbol-bg);
-        }
-
-        /* 按钮 */
-        /* .btns { margin-top: 10px; display: flex; gap: 8px; }
-        .btn { cursor: pointer; padding: 4px 8px; border: none; border-radius: 4px; font-size: .9em; }
-        .btn-show { background: #f0ad4e; color: #fff; }
-        .btn-copy { background: #5bc0de; color: #fff; } */
-        .title-and-btns {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .card-title {
-            font-weight: 600;
-            word-break: break-all;
-            margin: 0;
-        }
-
-        .btn-inline {
-            cursor: pointer;
-            padding: 2px 6px;
-            border: none;
-            border-radius: 3px;
-            font-size: .85em;
-            background: #888;
-            color: #fff;
-        }
-        /* 编辑密码按钮 */
-        .card {
-            position: relative; /* 建立定位上下文 */
-        }
-
-        .btn-edit {
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            background: #007bff; 
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        /* FAB 样式 */
-        .fab-container {
-            position: fixed;
-            right: 30px;
-            bottom: 30px;
-            z-index: 100;
-            cursor: pointer;
-        }
-
-        .fab-button {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background-color: #ff4081;
-            color: white;
-            font-size: 32px;
-            /* line-height: 56px; */
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.2s;
-        }
-
-        .fab-button:hover {
-            background-color: #e73370;
-        }
-        /* url样式 */
-        .field-url:has(a[href=""]), .field-url:has(a:not([href])) {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="./pwd-list-style.css">
 </head>
 
 <body>
     <!-- notyf资源挂载 -->
     <link rel="stylesheet" href="node_modules/notyf/notyf.min.css">
-    <div id="list">正在加载数据...</div>
+    <div id="list" >正在加载数据...</div>
     <!-- 固定浮动按钮 -->
     <div class="fab-container" id="fabAdd">
         <div class="fab-button">+</div>
@@ -237,7 +53,13 @@
         window.electronAPI.onInit((list) => {
             const container = document.getElementById('list');
             container.innerHTML = '';
-
+            if (!list || list.length === 0) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'empty-state ';
+                placeholder.innerText = '暂未保存密码记录';
+                container.appendChild(placeholder);
+                return;
+            }
             list.forEach(item => {
                 const content = escapeHtml(item.content);
                 const createTime = escapeHtml(item.createTime);

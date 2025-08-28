@@ -54,7 +54,7 @@ function createListWindow(dataList) {
         width: 600,
         height: 800,
         parent: BrowserWindow.getFocusedWindow(), // 设置父窗口
-        // modal: true, // 模态窗口（主窗口失焦）
+        modal: true, // 模态窗口（主窗口失焦）
         show: false,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
@@ -83,7 +83,7 @@ function createAddPasswordWindow(data) {
         width: 600,
         height: 800,
         parent: BrowserWindow.getFocusedWindow(), // 设置父窗口
-        // modal: true, // 模态窗口（主窗口失焦）
+        modal: true, // 模态窗口（主窗口失焦）
         show: false,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
@@ -127,6 +127,13 @@ function IPCRegister(win) {
         store.set('pwdRecords', list);
         return true; // 返回添加成功
     });
+    ipcMain.handle('modify-pwd-record', (event, record) => {
+        // 将record.id 相同的数据项替换为传入的record
+        const list = store.get('pwdRecords', []);
+        const index = list.findIndex(item => item.id === record.id);
+        list[index] = record;
+        store.set('pwdRecords', list);
+    })
     ipcMain.on('delete-pwd-record', (event, id) => {
         // 1. 获取原始列表
         const list = store.get('pwdRecords', []);
