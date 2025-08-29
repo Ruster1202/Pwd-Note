@@ -48,8 +48,8 @@ function createWindow() {
     // 开发模式下打开开发者工具（可选）
     mainWindow.webContents.openDevTools();
 }
-function createListWindow(dataList) {
-    console.log('dataList:', dataList);
+function createListWindow(data) {
+    console.log('data:', data);
     const listWin = new BrowserWindow({
         width: 600,
         height: 800,
@@ -68,12 +68,12 @@ function createListWindow(dataList) {
     listWin.once('ready-to-show', () => {
         console.log('ready-to-show...');
         listWin.show();
-        listWin.webContents.send('init-data', dataList); // 初始化数据
+        // listWin.webContents.send('init-data', dataList); // 初始化数据
     });
     // 刷新回调
     listWin.webContents.on('did-finish-load', () => {
         console.log('did-finish-load...');
-        listWin.webContents.send('init-data', dataList);
+        // listWin.webContents.send('init-data', dataList);
     });
 }
 // open-add-password-window
@@ -142,13 +142,16 @@ function IPCRegister(win) {
         // 3. 保存回 store
         store.set('pwdRecords', newList);
     });
-    ipcMain.handle('open-list-window', (event, dataList) => {
-        createListWindow(dataList || []);
+    // 窗口只传递不变动的元数据，需要变动的使用接口通过ICP动态获取
+    ipcMain.handle('open-list-window', (event, data) => {
+        createListWindow(data || null);
     });
     ipcMain.handle('open-add-password-window', (event, data) => {
         createAddPasswordWindow(data || null);
     });
-
+    ipcMain.handle('get-current-dataList', () => {
+        return currentDataList;
+    });
     ipcMain.handle('reset-store', (event) => {
         try {
             store.clear();

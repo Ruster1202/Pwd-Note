@@ -11,7 +11,7 @@
 <body>
     <!-- notyf资源挂载 -->
     <link rel="stylesheet" href="node_modules/notyf/notyf.min.css">
-    <div id="list" >正在加载数据...</div>
+    <div id="list">正在加载数据...</div>
     <!-- 固定浮动按钮 -->
     <div class="fab-container" id="fabAdd">
         <div class="fab-button">+</div>
@@ -29,7 +29,7 @@
             window.electronAPI.openAddPasswordWindow(null); // 可根据具体实现修改
         });
     </script>
-    <script>
+    <script type="module">
         // FIX:左括号< 注入BUG
         function escapeHtml(str) {
             if (typeof str !== 'string') return str;
@@ -48,18 +48,19 @@
             numberChars: '数字',
             symbolChars: '符号',
             custom: '自定义',
-            
         };
-        window.electronAPI.onInit((list) => {
-            const container = document.getElementById('list');
-            container.innerHTML = '';
-            if (!list || list.length === 0) {
-                const placeholder = document.createElement('div');
-                placeholder.className = 'empty-state ';
-                placeholder.innerText = '暂未保存密码记录';
-                container.appendChild(placeholder);
-                return;
-            }
+        const container = document.getElementById('list');
+        container.innerHTML = '';
+
+        let list = await window.electronAPI.showStore();
+        list = list.pwdRecords
+        console.log('查看list', list);
+        if (!list || list.length === 0) {
+            const placeholder = document.createElement('div');
+            placeholder.className = 'empty-state ';
+            placeholder.innerText = '暂未保存密码记录';
+            container.appendChild(placeholder);
+        } else {
             list.forEach(item => {
                 const content = escapeHtml(item.content);
                 const createTime = escapeHtml(item.createTime);
@@ -105,7 +106,7 @@
                 copyBtn.addEventListener('click', async () => {
                     await navigator.clipboard.writeText(content);
                     copyBtn.innerText = '已复制';
-                    await window.electronAPI.showTip('success','已复制！');
+                    await window.electronAPI.showTip('success', '已复制！');
                     setTimeout(async () => {
                         copyBtn.innerText = '复制'
                     }, 1000);
@@ -115,7 +116,7 @@
                     console.log('你好');
                     // await window.electronAPI.openAddPasswordWindow(item);
                     await navigator.clipboard.writeText(content);
-                    await window.electronAPI.showTip('success','已复制！');
+                    await window.electronAPI.showTip('success', '已复制！');
                 });
                 card.querySelector('.btn-edit').addEventListener('click', (event) => {
                     event.stopPropagation(); // 阻止事件冒泡
@@ -124,25 +125,27 @@
                 });
                 card.querySelector('.btn-delete').addEventListener('click', async (event) => {
                     event.stopPropagation(); // 阻止事件冒泡
-                    let res  = await window.electronAPI.showConfirm({
+                    let res = await window.electronAPI.showConfirm({
                         title: '确认删除记录',
                         message: '你确定要删除该记录吗？',
                         detail: '此操作不可撤销！！！',
                     });
                     if (res) {
                         window.electronAPI.deletePwdRecord(item)
-                        window.electronAPI.showTip('success','删除成功！');
+                        window.electronAPI.showTip('success', '删除成功！');
                         // TODO: 这里后续交给同意刷新来做
                         container.removeChild(card);
                     } else {
-                        window.electronAPI.showTip('error','删除失败，用户取消操作！');
+                        window.electronAPI.showTip('error', '删除失败，用户取消操作！');
                     }
                 });
-                
+
                 card.title = "双击以复制"
                 container.appendChild(card);
             });
-        });
+
+        }
+
     </script>
 
 </body>
