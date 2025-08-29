@@ -84,9 +84,11 @@
 <body>
     <!-- notyf资源挂载 -->
     <link rel="stylesheet" href="node_modules/notyf/notyf.min.css">
-    <form id="pwdForm">
-        <!-- 隐藏id -->
-        <div id="hidden-record-id" data-createtime=""></div>
+    <form id="pwdForm" data-createtime="">
+        <div class="field">
+            <label for="account">账户</label>
+            <input type="text" id="account" name="account">
+        </div>
         <div class="field">
             <label for="content">密码内容</label>
             <div class="password-wrapper">
@@ -170,7 +172,9 @@
                 modifyUUID = data.id;
                 // 自动填写
                 pwdInput.value = data.content;
-                form.dataset.createtime = data.createtime;
+                form.dataset.createtime = data.createTime;
+                // console.log('see data.dataset.createtimeAAA', form.dataset.createtime,data.createTime);
+                form.account.value = data.account;
                 form.description.value = data.description;
                 form.url.value = data.url;
                 form.minLength.value = data.length.minLength;
@@ -214,6 +218,7 @@
                 checkboxList = Array.from(checkedInputs).map(input => input.value);
             }
             let isModify = (modeCode === 2 || modeCode === 3) ? true : false
+            console.log('see form.dataset.createtime', form.dataset.createtime);
             // 如果设计能改成按需最小化修改那就非常完美，现在是全部重新覆盖，效率低一些
             const result = {
                 id: modifyUUID ? modifyUUID : await window.electronAPI.getUUID(),
@@ -222,6 +227,7 @@
                 isModify: isModify,
                 updateTime: isModify ? new Date().toISOString() : null,
                 content: pwdInput.value,
+                account: form.account.value,
                 description: form.description.value,
                 url: form.url.value,
                 rules: modeCode === 3 ? checkboxList : ["custom"], //selectedRules,
