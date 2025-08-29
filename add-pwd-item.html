@@ -85,6 +85,8 @@
     <!-- notyf资源挂载 -->
     <link rel="stylesheet" href="node_modules/notyf/notyf.min.css">
     <form id="pwdForm">
+        <!-- 隐藏id -->
+        <div id="hidden-record-id" data-createtime=""></div>
         <div class="field">
             <label for="content">密码内容</label>
             <div class="password-wrapper">
@@ -135,83 +137,107 @@
         const pwdInput = document.getElementById('content');
         var modifyUUID = null
         var isDefault = null // true代表是主页面默认生成，false代表是自定义新建,不显示密码长度(自动获取），不展示规则（默认为custom）
+        /*
+            -1 默认值
+            1 首次手动创还能
+            2 编辑——手动创建的记录
+            3 编辑——自动生成的记录 
+         */
+        var modeCode = -1;
         toggleBtn.addEventListener('click', () => {
             const isPwd = pwdInput.type === 'password';
             pwdInput.type = isPwd ? 'text' : 'password';
             toggleBtn.textContent = isPwd ? '隐藏' : '显示';
         });
-
+        // 分为：
+        // 1.手动首次创建时，隐藏规则选择，自动确定长度范围  规则为custom ，只显示长度
+        // 2.默认生成时，显示规则，显示范围
+        // 3.修改时，根据isDefault判断是哪一种（手动创建  or 自动生成）如果是手动生成
         window.electronAPI.onInitAddPwdItem((data) => {
-            console.log('查看传入data：', data?.rules[0]);
-            // 第一次通过手动添加是undefined 后续修改是custom
-            isDefault = data?.rules[0] === "custom" || data?.rules[0] === undefined ? false : true;
-            console.log('isDefault:', isDefault);
-            isDefault ? form.removeAttribute('novalidate') : form.setAttribute('novalidate', ''); 
-
             const rulesDiv = document.getElementById('rules');
             const lengthDiv = document.getElementById('length');
-            if (!isDefault) {
-                rulesDiv.style.display = 'none'; // 手动创建的不显示规则
-                lengthDiv.style.display = 'none'; // 手动创建的不显示长度范围
-                // 设置标记，用于改变文字和保存逻辑
-                if (data?.rules[0] === "custom") {
-                    document.querySelector('.submit-btn').textContent = '修改';
-                    modifyUUID = data.id; // 保存时需要判断是否是编辑
-                }
-            } else {
-                rulesDiv.style.display = 'block'; // 规则随机生成时显示规则
-                lengthDiv.style.display = 'block'; // 规则随机生成时显示长度范围
+            // 默认不显示
+            rulesDiv.style.display = 'none';
+            lengthDiv.style.display = 'none';
+            // 首次自定义创建
+            if (data === null) {
+                form.setAttribute('novalidate', '')
+                modeCode = 1;
             }
-            if (data?.content) pwdInput.value = data.content;
-            if (data?.description) form.description.value = data.description;
-            if (data?.url) form.url.value = data.url;
-            if (data?.length) {
+            // 编辑密码
+            else {
+                document.querySelector('.submit-btn').textContent = '修改';
+                modifyUUID = data.id;
+                // 自动填写
+                pwdInput.value = data.content;
+                form.dataset.createtime = data.createtime;
+                form.description.value = data.description;
+                form.url.value = data.url;
                 form.minLength.value = data.length.minLength;
-                form.maxLength.value = data.length.maxLength;
-            }
-            if (data?.rules) {
+                form.maxLength.value = data.length.maxLength; // 自定义时为-1
                 data.rules.forEach(r => {
                     const cb = form.querySelector(`input[name="rules"][value="${r}"]`);
                     if (cb) cb.checked = true;
                 });
-            }
-            if (data?.tags) {
                 form.tags.value = data.tags.join(', ');
+
+                // 编辑自定义
+                if (data.rules[0] === "custom") {
+                    form.setAttribute('novalidate', '')
+                    modeCode = 2;
+                }
+                // 编辑自动生成的 
+                else {
+                    form.removeAttribute('novalidate')
+                    modeCode = 3;
+                    rulesDiv.style.display = 'block';
+                    lengthDiv.style.display = 'block';
+                    
+                }
             }
+            console.log('see modeCode', modeCode);
         });
+        console.log('see modeCode', modeCode);
         // TODO:代码写错了！！！不停该氛分为isEdit，而是应该添加类型字段，表示是自定义还是随机规则生成
         // 现在先根据rules的一号元素是否为custom来进行判断
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (isDefault) {
+            let checkboxList = []
+            if (modeCode == 3) {
                 const selectedRules = Array.from(form.querySelectorAll('input[name="rules"]:checked')).map(el => el.value);
                 if (!selectedRules.length) {
                     alert('请至少选择一项规则');
                     return;
                 }
+                // 收集规则，长度不用管
+                const checkedInputs = document.querySelectorAll('#rules input[type="checkbox"]:checked');
+                checkboxList = Array.from(checkedInputs).map(input => input.value);
             }
+            let isModify = (modeCode === 2 || modeCode === 3) ? true : false
+            // 如果设计能改成按需最小化修改那就非常完美，现在是全部重新覆盖，效率低一些
             const result = {
-                id: modifyUUID ? modifyUUID :await window.electronAPI.getUUID(),
-                createTime: new Date().toISOString(),
-                isModify: false,
-                updateTime: null,
+                id: modifyUUID ? modifyUUID : await window.electronAPI.getUUID(),
+                createTime: modeCode === 1 ? new Date().toISOString() : form.dataset.createtime, // 所有生命周期，只生成一次
+                // 如果是首次创建的密码（modeCode == 1）认为没有被修改
+                isModify: isModify,
+                updateTime: isModify ? new Date().toISOString() : null,
                 content: pwdInput.value,
                 description: form.description.value,
                 url: form.url.value,
-                rules: ["custom"], //selectedRules,
+                rules: modeCode === 3 ? checkboxList : ["custom"], //selectedRules,
                 length: {
-                    minLength: String(pwdInput.value).length || 0,
-                    maxLength: -1,// 特殊标记，代表是自定义的
+                    minLength: (modeCode == 3 ? form.minLength.value : String(pwdInput.value).length) || 1,
+                    maxLength: (modeCode == 3 ? form.maxLength.value : -1) || -1,
                 },
                 tags: form.tags.value.split(',').map(t => t.trim()).filter(t => t),
             };
             console.log('submit!!!!');
-            console.log('查看UUID：',modifyUUID);
-            modifyUUID ? await window.electronAPI.modifyPwdRecord(result)  : await window.electronAPI.addPwdRecord(result);
+            console.log('查看UUID：', modifyUUID);
+            modifyUUID ? await window.electronAPI.modifyPwdRecord(result) : await window.electronAPI.addPwdRecord(result);
             await window.electronAPI.showTip('success', '密码添加成功！');
-            
+
             modifyUUID = null
-            isDefault = null 
+            isDefault = null
             setTimeout(() => {
                 window.close();
             }, 800);
