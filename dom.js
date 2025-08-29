@@ -65,6 +65,8 @@ const globalCurrentPwd = {
     modifyTime: null,
     // 密钥内容
     content: "",
+    // 用户账号昵称  后续自己在编辑界面自己设置
+    userAcountNickName: "",
     // 密钥说明
     description: "",
     // 密钥使用网址

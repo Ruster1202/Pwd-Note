@@ -1,7 +1,7 @@
 /* 
 该文件定义应用的主窗口并加载预加载脚本
  */
-const { app, BrowserWindow, Menu, screen, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, screen, ipcMain,dialog } = require('electron');
 const path = require('path');
 const Store = require("electron-store");
 
@@ -134,11 +134,11 @@ function IPCRegister(win) {
         list[index] = record;
         store.set('pwdRecords', list);
     })
-    ipcMain.on('delete-pwd-record', (event, id) => {
+    ipcMain.handle('delete-pwd-record', (event, record) => {
         // 1. 获取原始列表
         const list = store.get('pwdRecords', []);
         // 2. 过滤出非匹配项
-        const newList = list.filter(record => record.id !== id);
+        const newList = list.filter(item => item.id !== record.id);
         // 3. 保存回 store
         store.set('pwdRecords', newList);
     });
@@ -158,5 +158,17 @@ function IPCRegister(win) {
         }
         return true;
     });
-
+    // 确认框  确认1 => True 取消0 => False
+    ipcMain.handle('confirm-delete', async (event,msg) => {
+        const { response } = await dialog.showMessageBox({
+            type: 'question',
+            buttons: ['取消', '确定'],
+            defaultId: 1,
+            cancelId: 0,
+            title: msg.title || '确认操作',
+            message: msg.message || '你确定要继续执行此操作吗？',
+            detail: msg.detail || '此操作不可撤销。',
+        });
+        return response === 1;
+    });
 }

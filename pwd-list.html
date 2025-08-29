@@ -89,7 +89,8 @@
                     <div><span class="label">Rules:</span> <span class="value">${rules}</span></div>
                     <div><span class="label">Length:</span> <span class="value">${lengthMin} – ${lengthMax}</span></div>
                 </div>
-                <button class="btn-edit" title="编辑">✎</button>`;
+                <button class="btn-edit" title="编辑">✎</button>
+                <button class="btn-delete" title="删除">🗑</button>`;
                 const titleSpan = card.querySelector('.card-title');
                 const showBtn = card.querySelector('.btn-show');
                 const copyBtn = card.querySelector('.btn-copy');
@@ -121,6 +122,23 @@
                     // 这里放编辑逻辑，比如打开编辑窗口
                     window.electronAPI.openAddPasswordWindow(item);
                 });
+                card.querySelector('.btn-delete').addEventListener('click', async (event) => {
+                    event.stopPropagation(); // 阻止事件冒泡
+                    let res  = await window.electronAPI.showConfirm({
+                        title: '确认删除记录',
+                        message: '你确定要删除该记录吗？',
+                        detail: '此操作不可撤销！！！',
+                    });
+                    if (res) {
+                        window.electronAPI.deletePwdRecord(item)
+                        window.electronAPI.showTip('success','删除成功！');
+                        // TODO: 这里后续交给同意刷新来做
+                        container.removeChild(card);
+                    } else {
+                        window.electronAPI.showTip('error','删除失败，用户取消操作！');
+                    }
+                });
+                
                 card.title = "双击以复制"
                 container.appendChild(card);
             });

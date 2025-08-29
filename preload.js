@@ -14,13 +14,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getUUID: () => randomUUID(), // Node.js 方式
   addPwdRecord: (record) => ipcRenderer.invoke('add-pwd-record', record),
   modifyPwdRecord: (record) => ipcRenderer.invoke('modify-pwd-record', record),
-  deletePwdRecord: (id) => ipcRenderer.send('delete-pwd-record', id),
+  deletePwdRecord: (record) => ipcRenderer.invoke('delete-pwd-record', record),
   // loadPasswordList: () => ipcRenderer.send('load-password-list'),
   openListWindow: (dataList) => ipcRenderer.invoke('open-list-window',dataList),
   onInit: (cb) => ipcRenderer.on('init-data', (event, data) => cb(data)),
   openAddPasswordWindow: (data) => ipcRenderer.invoke('open-add-password-window',data),
   onInitAddPwdItem: (cb) => ipcRenderer.on('init-data-add-pwd-item', (event, data) => cb(data)),
   resetStore: () => ipcRenderer.invoke('reset-store'),
+  // 确认框
+  showConfirm: (msg) => ipcRenderer.invoke('confirm-delete', msg),
 });
 
 let notyf = null;
