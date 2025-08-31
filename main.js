@@ -15,7 +15,7 @@ function createWindow() {
         // width: width * 0.8,
         // height: height * 0.8,
         // windows支持的最小有效尺寸
-        width: 800,
+        width: 600,
         height: 600,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'), // 启用预加载脚本
@@ -46,7 +46,8 @@ function createWindow() {
     // IPC 注册
     IPCRegister(mainWindow);
     // 开发模式下打开开发者工具（可选）
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
+
 }
 function createListWindow(data) {
     console.log('data:', data);
@@ -64,7 +65,7 @@ function createListWindow(data) {
     });
     listWin.loadFile('pwd-list.html');
 
-    listWin.webContents.openDevTools();
+    // listWin.webContents.openDevTools();
     listWin.once('ready-to-show', () => {
         console.log('ready-to-show...');
         listWin.show();
@@ -93,7 +94,7 @@ function createAddPasswordWindow(data) {
     });
     addPwdWin.loadFile('add-pwd-item.html');
 
-    addPwdWin.webContents.openDevTools();
+    // addPwdWin.webContents.openDevTools();
     addPwdWin.once('ready-to-show', () => {
         addPwdWin.show();
         addPwdWin.webContents.send('init-data-add-pwd-item', data); // 初始化数据

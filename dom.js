@@ -1,6 +1,7 @@
 // TODO:自定义使用布局
 // TODO:控制宽度为固定几个模板
 // TODO:提供一个历史密码生成列表，避免点击太快看不到曾经生成过的密码
+// TODO:记得添加导出功能
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('DOMContentLoaded')
     await init()
