@@ -27,6 +27,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   exportPasswords: (passwords) => ipcRenderer.invoke('export-passwords', passwords),
   // 导入密码
   importPasswords: () => ipcRenderer.invoke('import-passwords'),
+  // 获取是否为开发环境
+  isDevEnvironment: () => ipcRenderer.invoke('is-dev-environment'),
 });
 
 let notyf = null;

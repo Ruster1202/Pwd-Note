@@ -78,6 +78,23 @@
         </div>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // 获取是否为开发环境
+                const isDev = await window.electronAPI.isDevEnvironment();
+                // 如果不是开发环境（即生产环境），隐藏三个按钮
+                if (!isDev) {
+                    const toolButtons = document.querySelector('.tool-buttons');
+                    if (toolButtons) {
+                        toolButtons.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+                console.error('获取环境信息失败:', error);
+            }
+        });
+    </script>
     <script src="dom.js"></script>
 </body>
 

@@ -110,6 +110,11 @@ const crypto = require('crypto');
 const fs = require('fs').promises;
 
 function IPCRegister(win) {
+    // 检测当前环境（开发环境或生产环境）
+    const isDev = !app.isPackaged;
+    
+    // 提供环境信息给渲染进程
+    ipcMain.handle('is-dev-environment', () => isDev);
     ipcMain.handle('store-get', (event, key) => {
         console.log('[store-get]：', key);
         return store.get(key); // 获取存储的值
