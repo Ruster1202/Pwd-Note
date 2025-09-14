@@ -23,6 +23,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   resetStore: () => ipcRenderer.invoke('reset-store'),
   // 确认框
   showConfirm: (msg) => ipcRenderer.invoke('confirm-delete', msg),
+  // 导出密码
+  exportPasswords: (passwords) => ipcRenderer.invoke('export-passwords', passwords),
+  // 导入密码
+  importPasswords: () => ipcRenderer.invoke('import-passwords'),
 });
 
 let notyf = null;

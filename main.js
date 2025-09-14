@@ -105,6 +105,10 @@ function createAddPasswordWindow(data) {
 // Electron 初始化完成后创建窗口
 app.whenReady().then(createWindow);
 
+// 引入加密模块
+const crypto = require('crypto');
+const fs = require('fs').promises;
+
 function IPCRegister(win) {
     ipcMain.handle('store-get', (event, key) => {
         console.log('[store-get]：', key);
@@ -174,5 +178,101 @@ function IPCRegister(win) {
             detail: msg.detail || '此操作不可撤销。',
         });
         return response === 1;
+    });
+    // 导出密码
+    ipcMain.handle('export-passwords', async (event, passwords) => {
+        try {
+            // 打开保存对话框
+            const { filePath, canceled } = await dialog.showSaveDialog({
+                title: '导出密码',
+                defaultPath: `pwd_export_${new Date().toISOString().slice(0, 10)}.json`,
+                filters: [
+                    { name: 'JSON Files', extensions: ['json'] },
+                    { name: 'All Files', extensions: ['*'] }
+                ]
+            });
+            
+            if (canceled || !filePath) {
+                return false;
+            }
+            
+            // 加密密码数据
+            const ENCRYPTION_KEY = 'PwdNoteMasterKey'; // 可以让用户自定义，这里使用默认密钥
+            const IV_LENGTH = 16; // 初始化向量长度
+            const iv = crypto.randomBytes(IV_LENGTH);
+            const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY.padEnd(32, '0'), 'utf8'), iv);
+            const jsonData = JSON.stringify(passwords, null, 2);
+            let encrypted = cipher.update(jsonData);
+            encrypted = Buffer.concat([encrypted, cipher.final()]);
+            const encryptedData = iv.toString('hex') + ':' + encrypted.toString('hex');
+            
+            // 保存到文件
+            await fs.writeFile(filePath, encryptedData, 'utf8');
+            return true;
+        } catch (error) {
+            console.error('导出密码失败:', error);
+            return false;
+        }
+    });
+    
+    // 导入密码
+    ipcMain.handle('import-passwords', async (event) => {
+        try {
+            // 打开文件对话框
+            const { filePaths, canceled } = await dialog.showOpenDialog({
+                title: '导入密码',
+                filters: [
+                    { name: 'JSON Files', extensions: ['json'] },
+                    { name: 'All Files', extensions: ['*'] }
+                ],
+                properties: ['openFile']
+            });
+            
+            if (canceled || filePaths.length === 0) {
+                return false;
+            }
+            
+            const filePath = filePaths[0];
+            
+            // 读取并解密文件内容
+            const encryptedData = await fs.readFile(filePath, 'utf8');
+            const ENCRYPTION_KEY = 'PwdNoteMasterKey';
+            const textParts = encryptedData.split(':');
+            const iv = Buffer.from(textParts.shift(), 'hex');
+            const encryptedText = Buffer.from(textParts.join(':'), 'hex');
+            const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY.padEnd(32, '0'), 'utf8'), iv);
+            let decrypted = decipher.update(encryptedText);
+            decrypted = Buffer.concat([decrypted, decipher.final()]);
+            const jsonData = decrypted.toString();
+            const importedPasswords = JSON.parse(jsonData);
+            
+            // 获取现有密码列表
+            const existingPasswords = store.get('pwdRecords', []);
+            
+            // 根据ID去重，保留最新的记录
+            const passwordMap = new Map();
+            
+            // 先添加现有密码
+            existingPasswords.forEach(pwd => {
+                passwordMap.set(pwd.id, pwd);
+            });
+            
+            // 添加或更新导入的密码
+            importedPasswords.forEach(pwd => {
+                const existingPwd = passwordMap.get(pwd.id);
+                if (!existingPwd || new Date(pwd.createTime) > new Date(existingPwd.createTime)) {
+                    passwordMap.set(pwd.id, pwd);
+                }
+            });
+            
+            // 保存更新后的密码列表
+            const updatedPasswords = Array.from(passwordMap.values());
+            store.set('pwdRecords', updatedPasswords);
+            
+            return true;
+        } catch (error) {
+            console.error('导入密码失败:', error);
+            return false;
+        }
     });
 }

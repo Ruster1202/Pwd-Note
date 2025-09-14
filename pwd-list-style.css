@@ -179,6 +179,16 @@ body {
     cursor: pointer;
 }
 
+#fabExport {
+    bottom: 100px;
+    right: 30px;
+}
+
+#fabImport {
+    bottom: 170px;
+    right: 30px;
+}
+
 .fab-button {
     width: 56px;
     height: 56px;
@@ -190,10 +200,38 @@ body {
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .fab-button:hover {
     background-color: #e73370;
+}
+
+/* 为不同按钮设置不同颜色 */
+#fabAdd .fab-button {
+    background-color: #ff4081;
+}
+
+#fabExport .fab-button {
+    background-color: #2196F3;
+}
+
+#fabImport .fab-button {
+    background-color: #4CAF50;
+}
+
+#fabAdd .fab-button:hover {
+    background-color: #e73370;
+}
+
+#fabExport .fab-button:hover {
+    background-color: #0b7dda;
+}
+
+#fabImport .fab-button:hover {
+    background-color: #3d8b40;
 }
 
 /* url样式 */

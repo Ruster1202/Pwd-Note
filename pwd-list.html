@@ -16,6 +16,16 @@
     <div class="fab-container" id="fabAdd">
         <div class="fab-button">+</div>
     </div>
+    
+    <!-- 导出按钮 -->
+    <div class="fab-container" id="fabExport">
+        <div class="fab-button">⤓</div>
+    </div>
+    
+    <!-- 导入按钮 -->
+    <div class="fab-container" id="fabImport">
+        <div class="fab-button">⤒</div>
+    </div>
     <!-- <script>
         document.addEventListener('DOMContentLoaded', async () => {
             // 在这里处理“加载页面”事件，比如从服务器获取数据
@@ -27,6 +37,45 @@
         document.getElementById('fabAdd').addEventListener('click', () => {
             // 在这里处理“添加密码”事件，比如打开一个IPC窗口或弹窗
             window.electronAPI.openAddPasswordWindow(null); // 可根据具体实现修改
+        });
+        
+        // 导出按钮点击事件
+        document.getElementById('fabExport').addEventListener('click', async () => {
+            try {
+                // 获取密码列表
+                const store = await window.electronAPI.showStore();
+                const passwordRecords = store.pwdRecords || [];
+                
+                if (passwordRecords.length === 0) {
+                    window.electronAPI.showTip('error', '没有可导出的密码记录');
+                    return;
+                }
+                
+                // 调用主进程的导出功能
+                const result = await window.electronAPI.exportPasswords(passwordRecords);
+                if (result) {
+                    window.electronAPI.showTip('success', '密码导出成功');
+                }
+            } catch (error) {
+                console.error('导出密码失败:', error);
+                window.electronAPI.showTip('error', '导出密码失败');
+            }
+        });
+        
+        // 导入按钮点击事件
+        document.getElementById('fabImport').addEventListener('click', async () => {
+            try {
+                // 调用主进程的导入功能
+                const result = await window.electronAPI.importPasswords();
+                if (result) {
+                    window.electronAPI.showTip('success', '密码导入成功');
+                    // 刷新页面以显示新导入的密码
+                    location.reload();
+                }
+            } catch (error) {
+                console.error('导入密码失败:', error);
+                window.electronAPI.showTip('error', '导入密码失败');
+            }
         });
     </script>
     <script type="module">
