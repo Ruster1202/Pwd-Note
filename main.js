@@ -223,6 +223,23 @@ function IPCRegister(win) {
     // 导入密码
     ipcMain.handle('import-passwords', async (event) => {
         try {
+            // 在生产环境下，需要用户确认是否要导入密码
+            if (app.isPackaged) {
+                const { response } = await dialog.showMessageBox({
+                    type: 'warning',
+                    buttons: ['取消', '确定'],
+                    defaultId: 0,
+                    cancelId: 0,
+                    title: '确认导入',
+                    message: '导入密码可能会覆盖现有数据，确定要继续吗？',
+                    detail: '导入的密码将会与现有密码合并，相同ID的密码将会被更新。'
+                });
+                
+                if (response !== 1) {
+                    return false;
+                }
+            }
+            
             // 打开文件对话框
             const { filePaths, canceled } = await dialog.showOpenDialog({
                 title: '导入密码',
