@@ -1,6 +1,9 @@
-import type { ConfirmMessage, PasswordRecord, PasswordStoreData } from './models';
-
 declare global {
+  type PasswordRule = import('./models').PasswordRule;
+  type PasswordLength = import('./models').PasswordLength;
+  type PasswordRecord = import('./models').PasswordRecord;
+  type PasswordStoreData = import('./models').PasswordStoreData;
+  type ConfirmMessage = import('./models').ConfirmMessage;
   type TipType = 'success' | 'error' | 'warn';
 
   interface ElectronAPI {
