@@ -6,10 +6,10 @@ const ruleLabels: Record<PasswordRule, string> = {
   custom: '自定义',
 };
 
-const container = mustGetElement<HTMLDivElement>('list');
-const fabAdd = mustGetElement<HTMLDivElement>('fabAdd');
-const fabExport = mustGetElement<HTMLDivElement>('fabExport');
-const fabImport = mustGetElement<HTMLDivElement>('fabImport');
+const container = getPwdListElement<HTMLDivElement>('list');
+const fabAdd = getPwdListElement<HTMLDivElement>('fabAdd');
+const fabExport = getPwdListElement<HTMLDivElement>('fabExport');
+const fabImport = getPwdListElement<HTMLDivElement>('fabImport');
 
 fabAdd.addEventListener('click', () => {
   void window.electronAPI.openAddPasswordWindow(null);
@@ -192,7 +192,7 @@ function escapeHtml(str: string): string {
     .replace(/`/g, '&#096;');
 }
 
-function mustGetElement<T extends HTMLElement>(id: string): T {
+function getPwdListElement<T extends HTMLElement>(id: string): T {
   const element = document.getElementById(id);
 
   if (!element) {

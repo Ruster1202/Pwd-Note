@@ -1,15 +1,15 @@
-const form = mustGetElement<HTMLFormElement>('pwdForm');
+const form = getAddPwdElement<HTMLFormElement>('pwdForm');
 const submitButton = form.querySelector<HTMLButtonElement>('.submit-btn');
-const toggleBtn = mustGetElement<HTMLButtonElement>('togglepwd');
-const pwdInput = mustGetElement<HTMLInputElement>('content');
-const accountInput = mustGetElement<HTMLInputElement>('account');
-const descriptionInput = mustGetElement<HTMLTextAreaElement>('description');
-const urlInput = mustGetElement<HTMLInputElement>('url');
-const minLengthInput = mustGetElement<HTMLInputElement>('minLength');
-const maxLengthInput = mustGetElement<HTMLInputElement>('maxLength');
-const tagsInput = mustGetElement<HTMLInputElement>('tags');
-const rulesDiv = mustGetElement<HTMLDivElement>('rules');
-const lengthDiv = mustGetElement<HTMLDivElement>('length');
+const toggleBtn = getAddPwdElement<HTMLButtonElement>('togglepwd');
+const pwdInput = getAddPwdElement<HTMLInputElement>('content');
+const accountInput = getAddPwdElement<HTMLInputElement>('account');
+const descriptionInput = getAddPwdElement<HTMLTextAreaElement>('description');
+const urlInput = getAddPwdElement<HTMLInputElement>('url');
+const minLengthInput = getAddPwdElement<HTMLInputElement>('minLength');
+const maxLengthInput = getAddPwdElement<HTMLInputElement>('maxLength');
+const tagsInput = getAddPwdElement<HTMLInputElement>('tags');
+const rulesDiv = getAddPwdElement<HTMLDivElement>('rules');
+const lengthDiv = getAddPwdElement<HTMLDivElement>('length');
 
 let modifyUUID: string | null = null;
 let modeCode: -1 | 1 | 2 | 3 = -1;
@@ -121,7 +121,7 @@ async function submitPasswordRecord(): Promise<void> {
   }, 800);
 }
 
-function mustGetElement<T extends HTMLElement>(id: string): T {
+function getAddPwdElement<T extends HTMLElement>(id: string): T {
   const element = document.getElementById(id);
 
   if (!element) {

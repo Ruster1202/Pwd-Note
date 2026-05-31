@@ -64,22 +64,22 @@ const globalCurrentPwd: GeneratedPasswordRecord = {
 document.addEventListener('DOMContentLoaded', async () => {
   await init();
 
-  mustGetElement<HTMLButtonElement>('generate').addEventListener('click', () => {
+  getDomElement<HTMLButtonElement>('generate').addEventListener('click', () => {
     void generatePassword();
   });
-  mustGetElement<HTMLButtonElement>('save').addEventListener('click', () => {
+  getDomElement<HTMLButtonElement>('save').addEventListener('click', () => {
     void savePassword();
   });
-  mustGetElement<HTMLButtonElement>('viewPasswords').addEventListener('click', () => {
+  getDomElement<HTMLButtonElement>('viewPasswords').addEventListener('click', () => {
     void viewPasswords();
   });
-  mustGetElement<HTMLElement>('reset-store').addEventListener('click', () => {
+  getDomElement<HTMLElement>('reset-store').addEventListener('click', () => {
     void loadResetTool();
   });
-  mustGetElement<HTMLElement>('check-store').addEventListener('click', () => {
+  getDomElement<HTMLElement>('check-store').addEventListener('click', () => {
     void loadCheckTool();
   });
-  mustGetElement<HTMLElement>('generate-store').addEventListener('click', () => {
+  getDomElement<HTMLElement>('generate-store').addEventListener('click', () => {
     void loadGenerateTool();
   });
 
@@ -230,13 +230,13 @@ async function loadGenerateTool(): Promise<void> {
 
 function getDom(): DomRefs {
   return {
-    minLengthInput: mustGetElement<HTMLInputElement>('minLength'),
-    maxLengthInput: mustGetElement<HTMLInputElement>('maxLength'),
-    lowercaseCheckbox: mustGetElement<HTMLInputElement>('lowercase'),
-    uppercaseCheckbox: mustGetElement<HTMLInputElement>('uppercase'),
-    numbersCheckbox: mustGetElement<HTMLInputElement>('numbers'),
-    symbolsCheckbox: mustGetElement<HTMLInputElement>('symbols'),
-    passwordField: mustGetElement<HTMLInputElement>('password'),
+    minLengthInput: getDomElement<HTMLInputElement>('minLength'),
+    maxLengthInput: getDomElement<HTMLInputElement>('maxLength'),
+    lowercaseCheckbox: getDomElement<HTMLInputElement>('lowercase'),
+    uppercaseCheckbox: getDomElement<HTMLInputElement>('uppercase'),
+    numbersCheckbox: getDomElement<HTMLInputElement>('numbers'),
+    symbolsCheckbox: getDomElement<HTMLInputElement>('symbols'),
+    passwordField: getDomElement<HTMLInputElement>('password'),
   };
 }
 
@@ -245,7 +245,7 @@ function handleConditionChange(): void {
   dom.passwordField.value = '';
 }
 
-function mustGetElement<T extends HTMLElement>(id: string): T {
+function getDomElement<T extends HTMLElement>(id: string): T {
   const element = document.getElementById(id);
 
   if (!element) {

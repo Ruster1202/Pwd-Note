@@ -3,7 +3,6 @@
 // TODO:控制宽度为固定几个模板
 // TODO:提供一个历史密码生成列表，避免点击太快看不到曾经生成过的密码
 // TODO:记得添加导出功能
-Object.defineProperty(exports, "__esModule", { value: true });
 const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
 const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const numberChars = '0123456789';
@@ -45,22 +44,22 @@ const globalCurrentPwd = {
 };
 document.addEventListener('DOMContentLoaded', async () => {
     await init();
-    mustGetElement('generate').addEventListener('click', () => {
+    getDomElement('generate').addEventListener('click', () => {
         void generatePassword();
     });
-    mustGetElement('save').addEventListener('click', () => {
+    getDomElement('save').addEventListener('click', () => {
         void savePassword();
     });
-    mustGetElement('viewPasswords').addEventListener('click', () => {
+    getDomElement('viewPasswords').addEventListener('click', () => {
         void viewPasswords();
     });
-    mustGetElement('reset-store').addEventListener('click', () => {
+    getDomElement('reset-store').addEventListener('click', () => {
         void loadResetTool();
     });
-    mustGetElement('check-store').addEventListener('click', () => {
+    getDomElement('check-store').addEventListener('click', () => {
         void loadCheckTool();
     });
-    mustGetElement('generate-store').addEventListener('click', () => {
+    getDomElement('generate-store').addEventListener('click', () => {
         void loadGenerateTool();
     });
     const els = document.querySelectorAll('#uppercase, #lowercase, #numbers, #symbols, #minLength, #maxLength');
@@ -179,20 +178,20 @@ async function loadGenerateTool() {
 }
 function getDom() {
     return {
-        minLengthInput: mustGetElement('minLength'),
-        maxLengthInput: mustGetElement('maxLength'),
-        lowercaseCheckbox: mustGetElement('lowercase'),
-        uppercaseCheckbox: mustGetElement('uppercase'),
-        numbersCheckbox: mustGetElement('numbers'),
-        symbolsCheckbox: mustGetElement('symbols'),
-        passwordField: mustGetElement('password'),
+        minLengthInput: getDomElement('minLength'),
+        maxLengthInput: getDomElement('maxLength'),
+        lowercaseCheckbox: getDomElement('lowercase'),
+        uppercaseCheckbox: getDomElement('uppercase'),
+        numbersCheckbox: getDomElement('numbers'),
+        symbolsCheckbox: getDomElement('symbols'),
+        passwordField: getDomElement('password'),
     };
 }
 function handleConditionChange() {
     const dom = getDom();
     dom.passwordField.value = '';
 }
-function mustGetElement(id) {
+function getDomElement(id) {
     const element = document.getElementById(id);
     if (!element) {
         throw new Error(`Missing element: ${id}`);

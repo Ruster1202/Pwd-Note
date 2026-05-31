@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const ruleLabels = {
     uppercaseChars: '大写',
     lowercaseChars: '小写',
@@ -7,10 +6,10 @@ const ruleLabels = {
     symbolChars: '符号',
     custom: '自定义',
 };
-const container = mustGetElement('list');
-const fabAdd = mustGetElement('fabAdd');
-const fabExport = mustGetElement('fabExport');
-const fabImport = mustGetElement('fabImport');
+const container = getPwdListElement('list');
+const fabAdd = getPwdListElement('fabAdd');
+const fabExport = getPwdListElement('fabExport');
+const fabImport = getPwdListElement('fabImport');
 fabAdd.addEventListener('click', () => {
     void window.electronAPI.openAddPasswordWindow(null);
 });
@@ -162,7 +161,7 @@ function escapeHtml(str) {
         .replace(/'/g, '&#039;')
         .replace(/`/g, '&#096;');
 }
-function mustGetElement(id) {
+function getPwdListElement(id) {
     const element = document.getElementById(id);
     if (!element) {
         throw new Error(`Missing element: ${id}`);

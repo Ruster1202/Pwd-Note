@@ -1,17 +1,16 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const form = mustGetElement('pwdForm');
+const form = getAddPwdElement('pwdForm');
 const submitButton = form.querySelector('.submit-btn');
-const toggleBtn = mustGetElement('togglepwd');
-const pwdInput = mustGetElement('content');
-const accountInput = mustGetElement('account');
-const descriptionInput = mustGetElement('description');
-const urlInput = mustGetElement('url');
-const minLengthInput = mustGetElement('minLength');
-const maxLengthInput = mustGetElement('maxLength');
-const tagsInput = mustGetElement('tags');
-const rulesDiv = mustGetElement('rules');
-const lengthDiv = mustGetElement('length');
+const toggleBtn = getAddPwdElement('togglepwd');
+const pwdInput = getAddPwdElement('content');
+const accountInput = getAddPwdElement('account');
+const descriptionInput = getAddPwdElement('description');
+const urlInput = getAddPwdElement('url');
+const minLengthInput = getAddPwdElement('minLength');
+const maxLengthInput = getAddPwdElement('maxLength');
+const tagsInput = getAddPwdElement('tags');
+const rulesDiv = getAddPwdElement('rules');
+const lengthDiv = getAddPwdElement('length');
 let modifyUUID = null;
 let modeCode = -1;
 toggleBtn.addEventListener('click', () => {
@@ -101,7 +100,7 @@ async function submitPasswordRecord() {
         window.close();
     }, 800);
 }
-function mustGetElement(id) {
+function getAddPwdElement(id) {
     const element = document.getElementById(id);
     if (!element) {
         throw new Error(`Missing element: ${id}`);
