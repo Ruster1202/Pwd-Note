@@ -46,6 +46,32 @@ function getPwdRecords(): PasswordRecord[] {
   return store.get('pwdRecords', [] as PasswordRecord[]);
 }
 
+function detectPasswordRules(content: string): string[] {
+  const rules: string[] = [];
+
+  if (/[A-Z]/.test(content)) {
+    rules.push('uppercaseChars');
+  }
+  if (/[a-z]/.test(content)) {
+    rules.push('lowercaseChars');
+  }
+  if (/\d/.test(content)) {
+    rules.push('numberChars');
+  }
+  if (/[^A-Za-z0-9]/.test(content)) {
+    rules.push('symbolChars');
+  }
+
+  return rules.length > 0 ? rules : ['custom'];
+}
+
+function withNormalizedRules(record: PasswordRecord): PasswordRecord {
+  return {
+    ...record,
+    rules: detectPasswordRules(record.content),
+  };
+}
+
 function createWindow(): void {
   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 
@@ -155,7 +181,7 @@ function registerIPC(): void {
       return false;
     }
 
-    list[index] = record;
+    list[index] = withNormalizedRules(record);
     store.set('pwdRecords', list);
     return true;
   });

@@ -5,80 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>添加 / 编辑 密码</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f0f2f5;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-
-        form {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 500px;
-            margin: auto;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        form div.field {
-            margin-bottom: 16px;
-        }
-
-        form label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 500;
-        }
-
-        form input[type="text"],
-        form input[type="url"],
-        form input[type="password"],
-        form textarea,
-        form select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1em;
-        }
-
-        .password-wrapper {
-            position: relative;
-        }
-
-        .password-wrapper button {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            border: none;
-            background: none;
-            cursor: pointer;
-            font-size: 0.9em;
-            color: #007BFF;
-        }
-
-        .rules-group input {
-            margin-right: 6px;
-        }
-
-        button.submit-btn {
-            background: #28a745;
-            color: #fff;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 4px;
-            font-size: 1em;
-            cursor: pointer;
-        }
-
-        button.submit-btn:hover {
-            background: #218838;
-        }
-    </style>
+    <link rel="stylesheet" href="./add-pwd-item.css">
 </head>
 
 <body>
@@ -119,7 +46,7 @@
 
         <div class="field" id="length">
             <label for="minLength">长度范围</label>
-            <div style="display: flex; gap: 8px;">
+            <div class="length-row">
                 <input type="number" id="minLength" name="minLength" min="1" placeholder="最小长度">
                 <input type="number" id="maxLength" name="maxLength" min="1" placeholder="最大长度">
             </div>

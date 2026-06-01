@@ -1,3 +1,7 @@
 node_modules
 test
 out
+main.js
+preload.js
+dom.js
+renderer/*.js

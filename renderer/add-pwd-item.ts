@@ -20,6 +20,12 @@ toggleBtn.addEventListener('click', () => {
   toggleBtn.textContent = isPasswordType ? '隐藏' : '显示';
 });
 
+pwdInput.addEventListener('input', () => {
+  if (modeCode === 3) {
+    syncRuleCheckboxesByPassword(pwdInput.value);
+  }
+});
+
 window.electronAPI.onInitAddPwdItem((data) => {
   rulesDiv.style.display = 'none';
   lengthDiv.style.display = 'none';
@@ -62,6 +68,7 @@ window.electronAPI.onInitAddPwdItem((data) => {
   modeCode = 3;
   rulesDiv.style.display = 'block';
   lengthDiv.style.display = 'block';
+  syncRuleCheckboxesByPassword(pwdInput.value);
 });
 
 form.addEventListener('submit', (event) => {
@@ -70,21 +77,10 @@ form.addEventListener('submit', (event) => {
 });
 
 async function submitPasswordRecord(): Promise<void> {
-  let checkedRules: PasswordRule[] = [];
-
-  if (modeCode === 3) {
-    checkedRules = Array.from(
-      document.querySelectorAll<HTMLInputElement>('#rules input[type="checkbox"]:checked'),
-    ).map((input) => input.value as PasswordRule);
-
-    if (checkedRules.length === 0) {
-      alert('请至少选择一项规则');
-      return;
-    }
-  }
-
   const isModify = modeCode === 2 || modeCode === 3;
   const createTime = modeCode === 1 ? new Date().toISOString() : form.dataset.createtime || new Date().toISOString();
+  const autoRules = detectPasswordRules(pwdInput.value);
+  const finalRules: PasswordRule[] = isModify ? autoRules : ['custom'];
 
   const result: PasswordRecord = {
     id: modifyUUID ?? window.electronAPI.getUUID(),
@@ -95,7 +91,7 @@ async function submitPasswordRecord(): Promise<void> {
     account: accountInput.value,
     description: descriptionInput.value,
     url: urlInput.value,
-    rules: modeCode === 3 ? checkedRules : ['custom'],
+    rules: finalRules,
     length: {
       minLength: modeCode === 3 ? minLengthInput.value || 1 : String(pwdInput.value).length,
       maxLength: modeCode === 3 ? maxLengthInput.value || -1 : -1,
@@ -129,4 +125,36 @@ function getAddPwdElement<T extends HTMLElement>(id: string): T {
   }
 
   return element as T;
+}
+
+function detectPasswordRules(password: string): PasswordRule[] {
+  const detectedRules: PasswordRule[] = [];
+
+  if (/[A-Z]/.test(password)) {
+    detectedRules.push('uppercaseChars');
+  }
+  if (/[a-z]/.test(password)) {
+    detectedRules.push('lowercaseChars');
+  }
+  if (/\d/.test(password)) {
+    detectedRules.push('numberChars');
+  }
+  if (/[^A-Za-z0-9]/.test(password)) {
+    detectedRules.push('symbolChars');
+  }
+
+  if (detectedRules.length === 0) {
+    detectedRules.push('custom');
+  }
+
+  return detectedRules;
+}
+
+function syncRuleCheckboxesByPassword(password: string): void {
+  const detected = new Set(detectPasswordRules(password));
+  const checkboxes = form.querySelectorAll<HTMLInputElement>('#rules input[type="checkbox"]');
+
+  checkboxes.forEach((checkbox) => {
+    checkbox.checked = detected.has(checkbox.value as PasswordRule);
+  });
 }
