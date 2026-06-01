@@ -95,7 +95,7 @@ function createListWindow(data: PasswordRecord[] | null): void {
     width: 600,
     height: 800,
     parent: BrowserWindow.getFocusedWindow() ?? undefined,
-    modal: true,
+    modal: false,
     show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -123,7 +123,7 @@ function createAddPasswordWindow(data: PasswordRecord | null): void {
     width: 600,
     height: 800,
     parent: BrowserWindow.getFocusedWindow() ?? undefined,
-    modal: true,
+    modal: false,
     show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
